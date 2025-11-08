@@ -122,7 +122,11 @@ public class MapGeneratorScript : MonoBehaviour
                     Vector2Int topLocationS = location + new Vector2Int(0, ROOM_SIZE);
                     if (!rooms.ContainsKey(topLocationS)) //if there is a room above
                     {
-                        if (!LocationIsSurrounded(topLocationS) && !WouldSurroundLocation(location, 0))
+                        if (!LocationIsSurrounded(topLocationS) && 
+                            !WouldSurroundLocation(topLocationS + new Vector2Int(0, ROOM_SIZE), 1) &&
+                            !WouldSurroundLocation(topLocationS + new Vector2Int(0, -ROOM_SIZE), 0) &&
+                            !WouldSurroundLocation(topLocationS + new Vector2Int(ROOM_SIZE, 0), 2) &&
+                            !WouldSurroundLocation(topLocationS + new Vector2Int(-ROOM_SIZE, 0), 3))
                         {
                             PlaceRoom(topLocationS); return topLocationS;
                         }
@@ -132,7 +136,11 @@ public class MapGeneratorScript : MonoBehaviour
                     Vector2Int bottomLocationS = location + new Vector2Int(0, -ROOM_SIZE);
                     if (!rooms.ContainsKey(bottomLocationS)) //if there is a room above
                     {
-                        if (!LocationIsSurrounded(bottomLocationS) && !WouldSurroundLocation(location, 1))
+                        if (!LocationIsSurrounded(bottomLocationS) &&
+                            !WouldSurroundLocation(bottomLocationS + new Vector2Int(0, ROOM_SIZE), 1) &&
+                            !WouldSurroundLocation(bottomLocationS + new Vector2Int(0, -ROOM_SIZE), 0) &&
+                            !WouldSurroundLocation(bottomLocationS + new Vector2Int(ROOM_SIZE, 0), 2) &&
+                            !WouldSurroundLocation(bottomLocationS + new Vector2Int(-ROOM_SIZE, 0), 3))
                         {
                             PlaceRoom(bottomLocationS); return bottomLocationS;
                         }
@@ -142,7 +150,11 @@ public class MapGeneratorScript : MonoBehaviour
                     Vector2Int leftLocationS = location + new Vector2Int(-ROOM_SIZE, 0);
                     if (!rooms.ContainsKey(leftLocationS)) //if there is a room above
                     {
-                        if (!LocationIsSurrounded(leftLocationS) && !WouldSurroundLocation(location, 2))
+                        if (!LocationIsSurrounded(leftLocationS) &&
+                            !WouldSurroundLocation(leftLocationS + new Vector2Int(0, ROOM_SIZE), 1) &&
+                            !WouldSurroundLocation(leftLocationS + new Vector2Int(0, -ROOM_SIZE), 0) &&
+                            !WouldSurroundLocation(leftLocationS + new Vector2Int(ROOM_SIZE, 0), 2) &&
+                            !WouldSurroundLocation(leftLocationS + new Vector2Int(-ROOM_SIZE, 0), 3))
                         {
                             PlaceRoom(leftLocationS); return leftLocationS;
                         }
@@ -152,7 +164,11 @@ public class MapGeneratorScript : MonoBehaviour
                     Vector2Int rightLocationS = location + new Vector2Int(ROOM_SIZE, 0);
                     if (!rooms.ContainsKey(rightLocationS)) //if there is a room above
                     {
-                        if (!LocationIsSurrounded(rightLocationS) && !WouldSurroundLocation(location, 3))
+                        if (!LocationIsSurrounded(rightLocationS) &&
+                            !WouldSurroundLocation(rightLocationS + new Vector2Int(0, ROOM_SIZE), 1) &&
+                            !WouldSurroundLocation(rightLocationS + new Vector2Int(0, -ROOM_SIZE), 0) &&
+                            !WouldSurroundLocation(rightLocationS + new Vector2Int(ROOM_SIZE, 0), 2) &&
+                            !WouldSurroundLocation(rightLocationS + new Vector2Int(-ROOM_SIZE, 0), 3))
                         {
                             PlaceRoom(rightLocationS); return rightLocationS;
                         }
@@ -184,6 +200,8 @@ public class MapGeneratorScript : MonoBehaviour
 
     private bool WouldSurroundLocation(Vector2Int location, int newLocation)
     {
+        if (!rooms.ContainsKey(location)) return false; 
+
         bool left = false;
         bool right = false;
         bool up = false;

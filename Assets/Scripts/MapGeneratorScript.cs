@@ -12,7 +12,7 @@ public class MapGeneratorScript : MonoBehaviour
     private int targetRoomCount;
     private int deadEndBranchLengthMin;
     private int deadEndBranchLengthMax;
-    private int ROOM_SIZE = 12;
+    private int ROOM_SIZE = 16 * 4;
     private Vector2Int end;
 
     

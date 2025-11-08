@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EthanRoom : MonoBehaviour
 {
-    public GameObject roomBackground;
+    [SerializeField] private Sprite[] backgrounds;
 
     public GameObject leftRoom;
     public GameObject rightRoom;
@@ -13,6 +13,7 @@ public class EthanRoom : MonoBehaviour
     
     public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE)
     {
+        //Make sure all corners are properly set
         Vector2Int topLocation = location + new Vector2Int(0, ROOM_SIZE);
         if (rooms.ContainsKey(topLocation)) //if there is a room above
         {
@@ -40,6 +41,8 @@ public class EthanRoom : MonoBehaviour
             rightRoom = rooms[rightLocation];
             rightRoom.GetComponent<EthanRoom>().leftRoom = gameObject;
         }
+
+        
     }
     
 
@@ -47,7 +50,21 @@ public class EthanRoom : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        roomBackground.SetActive(true);
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        int randomIndex = UnityEngine.Random.Range(0, backgrounds.Length);
+        spriteRenderer.sprite = backgrounds[randomIndex];
+    }
+
+    //Should be called when we want to enter the room
+    void StartEnterRoom()
+    {
+
+    }
+
+    //Should be called when we want to finish entering the room (unfreeze enemies
+    void EndEnterRoom()
+    {
+
     }
 
     // Update is called once per frame

@@ -389,7 +389,6 @@ GameObject:
   - component: {fileID: 1997050008}
   - component: {fileID: 1997050010}
   - component: {fileID: 1997050011}
-  - component: {fileID: 1997050012}
   - component: {fileID: 1997050013}
   m_Layer: 0
   m_Name: Test Player
@@ -517,28 +516,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!95 &1997050012
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997050007}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1997050013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,6 +530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooter
   _prefabReference: {fileID: 8732989348203863343, guid: a0748d5ad31414660b56438c9fff9800, type: 3}
   _shootPoint: {fileID: 1411958910}
+  _shootInterval: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

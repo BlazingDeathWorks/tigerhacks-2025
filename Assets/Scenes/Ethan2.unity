@@ -325,7 +325,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1225248683}
   - component: {fileID: 1225248682}
-  - component: {fileID: 1225248681}
   - component: {fileID: 1225248684}
   m_Layer: 0
   m_Name: Triangle
@@ -334,24 +333,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1225248681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1225248680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7679e26fb6b443949b0d86eda9720c05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EthanPlayerController
-  BASE_SPEED: 10
-  DASH_SPEED_MULTIPLIER: 5
-  DASH_DURATION: 2
-  DASH_COOLDOWN: 1
-  audioSource: {fileID: 0}
-  dashSound: {fileID: 0}
 --- !u!212 &1225248682
 SpriteRenderer:
   m_ObjectHideFlags: 0

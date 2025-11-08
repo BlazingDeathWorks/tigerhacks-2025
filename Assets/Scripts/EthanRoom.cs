@@ -10,6 +10,8 @@ public class EthanRoom : MonoBehaviour
     public GameObject rightRoom;
     public GameObject topRoom;
     public GameObject bottomRoom;
+
+    bool roomCleared = false;
     
     public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE)
     {
@@ -42,29 +44,122 @@ public class EthanRoom : MonoBehaviour
             rightRoom.GetComponent<EthanRoom>().leftRoom = gameObject;
         }
 
+
+
         
     }
-    
+
+    void toggleLeftDoor(bool toggle)
+    {
+        GameObject door = this.transform.Find("LeftDoor").gameObject;
+        if (leftRoom != null)
+        {
+            door.GetComponent<SpriteRenderer>().enabled = toggle;
+        }
+    }
+
+    void toggleRightDoor(bool toggle)
+    {
+        GameObject door = this.transform.Find("RightDoor").gameObject;
+        if (rightRoom != null)
+        {
+            door.GetComponent<SpriteRenderer>().enabled = toggle;
+        }
+    }
+
+    void toggleTopDoor(bool toggle)
+    {
+        GameObject door = this.transform.Find("TopDoor").gameObject;
+        if (topRoom != null)
+        {
+            door.GetComponent<SpriteRenderer>().enabled = toggle;
+        }
+    }
+
+    void toggleBottomDoor(bool toggle)
+    {
+        GameObject door = this.transform.Find("BottomDoor").gameObject;
+        if (bottomRoom != null)
+        {
+            door.GetComponent<SpriteRenderer>().enabled = toggle;
+        }
+    }
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         int randomIndex = UnityEngine.Random.Range(0, backgrounds.Length);
         spriteRenderer.sprite = backgrounds[randomIndex];
+
+        this.transform.Find("LeftDoor").GetComponent<SpriteRenderer>().enabled = true;
+        this.transform.Find("RightDoor").GetComponent<SpriteRenderer>().enabled = true;
+        this.transform.Find("TopDoor").GetComponent<SpriteRenderer>().enabled = true;
+        this.transform.Find("BottomDoor").GetComponent<SpriteRenderer>().enabled = true;
     }
 
     //Should be called when we want to enter the room
-    void StartEnterRoom()
+    void StartEnterRoom(int enteringDirection) //0 == top, 1 == bottom, 2 == left, 3 == right
     {
+        if (this.roomCleared)
+        {
+            this.toggleLeftDoor(false); this.toggleRightDoor(false);
+            this.toggleTopDoor(false); this.toggleBottomDoor(false);
+            //TODO make sure enemies dont get regenerated
+        } else
+        {
+            switch (enteringDirection)
+            {
+                case 0:
+                    this.toggleTopDoor(false);
+                    break;
+                case 1:
+                    this.toggleBottomDoor(false);
+                    break;
+                case 2:
+                    this.toggleLeftDoor(false);
+                    break;
+                case 3:
+                    this.toggleRightDoor(false);
+                    break;
+            }
 
+            //TODO nothing should be done here technically
+        }
     }
 
-    //Should be called when we want to finish entering the room (unfreeze enemies
-    void EndEnterRoom()
+    //Should be called after we finish the room entering animation
+    void EndEnterRoom(int enteringDirection)
     {
 
+        if (!this.roomCleared)
+        {
+            switch (enteringDirection)
+            {
+                case 0:
+                    this.toggleTopDoor(true);
+                    break;
+                case 1:
+                    this.toggleBottomDoor(true);
+                    break;
+                case 2:
+                    this.toggleLeftDoor(true);
+                    break;
+                case 3:
+                    this.toggleRightDoor(true);
+                    break;
+            }
+
+            //TODO unfreeze the enemies
+        }
+    }
+
+    void ClearRoom()
+    {
+        this.roomCleared = true;
     }
 
     // Update is called once per frame

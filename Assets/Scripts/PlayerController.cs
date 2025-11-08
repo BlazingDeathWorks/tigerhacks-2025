@@ -6,21 +6,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float BASE_SPEED = 8f;
     
     [Header("Dash Settings")]
-    [SerializeField] private float DASH_SPEED_MULTIPLIER = 4f;
-    [SerializeField] private float DASH_DURATION = 0.3f;
+    [SerializeField] private float DASH_SPEED_MULTIPLIER = 3f;
+    [SerializeField] private float DASH_DURATION = 0.5f;
     [SerializeField] private float DASH_COOLDOWN = 1f;
     
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip dashSound;
     
-    // Private variables
+    [Header("Visual Effects")]
+    [SerializeField] private GameObject dashTrailPrefab;
+    [SerializeField] private float dashTrailAnimationLength = 0.5f;
+    
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private Vector2 mousePosition;
     private Camera mainCamera;
     
-    // Dash state
     private bool isDashing = false;
     private float dashTimeRemaining = 0f;
     private float dashCooldownRemaining = 0f;
@@ -30,13 +32,9 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
-        
-        // Configure Rigidbody2D for precise movement
         rb.gravityScale = 0f;
         rb.linearDamping = 0f;
         rb.angularDamping = 0f;
-        
-        // Setup audio source if not assigned
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -49,29 +47,18 @@ public class PlayerController : MonoBehaviour
     
     void Update()
     {
-        // Get input
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
-        
-        // Normalize diagonal movement
         if (moveInput.magnitude > 1f)
         {
             moveInput.Normalize();
         }
-        
-        // Get mouse position in world space
         mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        
-        // Handle rotation - always point towards mouse
         RotateTowardsMouse();
-        
-        // Handle dash input
         if (Input.GetKeyDown(KeyCode.Space) && dashCooldownRemaining <= 0f && !isDashing)
         {
             StartDash();
         }
-        
-        // Update dash cooldown
         if (dashCooldownRemaining > 0f)
         {
             dashCooldownRemaining -= Time.deltaTime;
@@ -92,107 +79,103 @@ public class PlayerController : MonoBehaviour
     
     private void RotateTowardsMouse()
     {
-        // Calculate direction to mouse
         Vector2 direction = mousePosition - (Vector2)transform.position;
-        
-        // Calculate angle and apply rotation
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f); // -90 assumes sprite faces up
+        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
     
     private void HandleNormalMovement()
     {
-        // Instant, snappy movement - no acceleration
         rb.linearVelocity = moveInput * BASE_SPEED;
     }
     
     private void StartDash()
     {
-        // Use current movement direction, or face direction if not moving
         if (moveInput.magnitude > 0.1f)
         {
             dashDirection = moveInput.normalized;
         }
         else
         {
-            // If not moving, dash toward mouse
             dashDirection = (mousePosition - (Vector2)transform.position).normalized;
         }
-        
         isDashing = true;
         dashTimeRemaining = DASH_DURATION;
         dashCooldownRemaining = DASH_COOLDOWN;
-        
-        // Play dash sound if available
         if (dashSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(dashSound);
+        }
+        if (dashTrailPrefab != null)
+        {
+            float explosionAngle = Mathf.Atan2(-dashDirection.y, -dashDirection.x) * Mathf.Rad2Deg;
+            Quaternion trailRotation = Quaternion.Euler(0f, 0f, explosionAngle - 90f);
+            GameObject trail = Instantiate(
+                dashTrailPrefab,
+                transform.position,
+                trailRotation
+            );
+            Destroy(trail, dashTrailAnimationLength);
         }
     }
     
     private void HandleDash()
     {
         dashTimeRemaining -= Time.fixedDeltaTime;
-        
         if (dashTimeRemaining <= 0f)
         {
-            // Dash complete
             isDashing = false;
             dashTimeRemaining = 0f;
             return;
         }
-        
-        // Calculate progress through dash (0 = start, 1 = end)
         float normalizedTime = 1f - (dashTimeRemaining / DASH_DURATION);
-        
+        float angleToMouse = Mathf.Atan2(mousePosition.y - transform.position.y, mousePosition.x - transform.position.x) * Mathf.Rad2Deg;
+        Quaternion dashOriginalRotation = Quaternion.Euler(0f, 0f, angleToMouse - 90f);
+        Quaternion dashFlippedRotation = dashOriginalRotation * Quaternion.Euler(0, 0, 180);
+        if (normalizedTime < 0.5f)
+        {
+            transform.rotation = dashFlippedRotation;
+        }
+        else
+        {
+            float lerpT = Mathf.InverseLerp(0.5f, 1.0f, normalizedTime);
+            transform.rotation = Quaternion.Lerp(dashFlippedRotation, dashOriginalRotation, lerpT);
+        }
         float currentDashSpeed;
-        
-        // Keep max speed for first 2/3, then ease out during last 1/3
         if (normalizedTime < 0.667f)
         {
-            // Full speed for first 2/3 of dash
             currentDashSpeed = BASE_SPEED * DASH_SPEED_MULTIPLIER;
         }
         else
         {
-            // Ease out during last 1/3
-            // Map 0.667-1.0 range to 0-1 for easing
             float easeProgress = (normalizedTime - 0.667f) / 0.333f;
-            // Cubic ease-out: fast at start of ease, slow at end
             float easeOutFactor = 1f - Mathf.Pow(1f - easeProgress, 3f);
             currentDashSpeed = Mathf.Lerp(BASE_SPEED * DASH_SPEED_MULTIPLIER, BASE_SPEED, easeOutFactor);
         }
-        
-        // Apply velocity in locked dash direction
         rb.linearVelocity = dashDirection * currentDashSpeed;
     }
     
-    // Public getter for dash state (useful for animation controller)
     public bool IsDashing()
     {
         return isDashing;
     }
     
-    // Public getter for dash progress (useful for tilt animation - 0 to 1)
     public float GetDashProgress()
     {
         if (!isDashing) return 0f;
         return 1f - (dashTimeRemaining / DASH_DURATION);
     }
     
-    // Public getter for dash direction (useful for tilt animation)
     public Vector2 GetDashDirection()
     {
         return dashDirection;
     }
     
-    // Public getter for dash availability (useful for UI)
     public bool CanDash()
     {
         return dashCooldownRemaining <= 0f && !isDashing;
     }
     
-    // Public getter for cooldown progress (useful for UI - 0 to 1)
     public float GetDashCooldownProgress()
     {
         return 1f - Mathf.Clamp01(dashCooldownRemaining / DASH_COOLDOWN);

@@ -82,6 +82,7 @@ GameObject:
   - component: {fileID: 4099971587127839743}
   - component: {fileID: 7522626097678216791}
   - component: {fileID: 4786424807812991809}
+  - component: {fileID: -8718910254656715795}
   m_Layer: 0
   m_Name: Crusher
   m_TagString: Untagged
@@ -275,3 +276,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-8718910254656715795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9147692074220433758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9541ff5944ac4ae2847a5e923a142a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  Health: 10

@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
 
     private float TargetX;
     private float TargetY;
+    private Vector2 oldVelocity;
 
     void Start()
     {
@@ -73,7 +74,12 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!movementEnabled) return;
+        if (!movementEnabled)
+        {
+            //transform.rotation = Quaternion.identity;
+            rb.angularVelocity = 0;
+            return;
+        }
         if (isDashing) HandleDash();
         else HandleNormalMovement();
     }
@@ -93,12 +99,15 @@ public class PlayerController : MonoBehaviour
         TargetX = 0;
         TargetY = 0;
         movementEnabled = false;
+        oldVelocity = rb.linearVelocity;
         rb.linearVelocity = new Vector2(0, 0);
+        
     }
 
     public void UnlockMovement()
     {
         movementEnabled = true;
+        rb.linearVelocity = oldVelocity;
     }
 
     private void RotateTowardsMouse()

@@ -172,8 +172,9 @@ MonoBehaviour:
     m_Bits: 64
   moveSpeed: 15
   _wallDetectionDistance: 3.5
-  _sweepSpeed: 20
-  _sweepLaserRate: 0.4
+  _sweepSpeed: 17
+  _sweepLaserRate: 0.5
+  _minimumEdgeTime: 5
 --- !u!1 &8828448389753858761
 GameObject:
   m_ObjectHideFlags: 0

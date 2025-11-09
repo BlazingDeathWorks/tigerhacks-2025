@@ -1300,14 +1300,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _sweepSpeed
-      value: 17
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _sweepLaserRate
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 5696613831008801797, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
       propertyPath: m_Name
       value: Lancer

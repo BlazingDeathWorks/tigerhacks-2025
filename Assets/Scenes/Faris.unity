@@ -590,8 +590,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.33, y: 259}
-  m_SizeDelta: {x: 500, y: 100}
+  m_AnchoredPosition: {x: 10.15, y: 259}
+  m_SizeDelta: {x: 524.96, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1511622105
 MonoBehaviour:
@@ -1300,6 +1300,7 @@ GameObject:
   - component: {fileID: 1785167865}
   - component: {fileID: 1785167864}
   - component: {fileID: 1785167867}
+  - component: {fileID: 1785167868}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1446,6 +1447,7 @@ MonoBehaviour:
   - {fileID: 1785167866}
   - {fileID: 1785167864}
   - {fileID: 1785167867}
+  - {fileID: 1785167868}
 --- !u!114 &1785167863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1484,9 +1486,10 @@ MonoBehaviour:
   reflectionMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  maxAmmo: 200
-  currentAmmo: 200
-  ammoConsumptionRate: 0.001
+  laserColor: {r: 0, g: 1, b: 0.16878843, a: 1}
+  maxAmmo: 999
+  currentAmmo: 999
+  ammoConsumptionRate: 0.01
 --- !u!120 &1785167865
 LineRenderer:
   serializedVersion: 2
@@ -1513,7 +1516,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1639,6 +1642,23 @@ MonoBehaviour:
     m_Bits: 1
   swingDuration: 0.05
   swingAngle: 180
+--- !u!114 &1785167868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785167856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05b477ac65ef3734999d3d4b847bae28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRocketLauncher
+  weaponIcon: {fileID: -2194053286348439904, guid: 18ae493a2518e004ebec4da606c4aa5f, type: 3}
+  rocketPrefab: {fileID: 2109397126785601246, guid: 6498e5b4444827046af49a1679599853, type: 3}
+  shootPoint: {fileID: 1184833550}
+  fireRate: 1
+  maxAmmo: 20
 --- !u!1 &1909802744
 GameObject:
   m_ObjectHideFlags: 0

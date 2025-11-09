@@ -56,13 +56,9 @@ public class ItemChoiceManager : MonoBehaviour
     {
         if (itemsSpawned) return;
         
-        // Get player reference to check owned weapons
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        PlayerWeaponManager weaponManager = player?.GetComponent<PlayerWeaponManager>();
-        
         // Select two different items
-        ItemType item1 = SelectRandomItem(weaponManager);
-        ItemType item2 = SelectRandomItem(weaponManager, item1);
+        ItemType item1 = SelectRandomItem();
+        ItemType item2 = SelectRandomItem(item1);
         
         // Spawn left item
         GameObject leftObj = Instantiate(itemPickupPrefab, leftSpawnPoint.position, Quaternion.identity);
@@ -78,7 +74,8 @@ public class ItemChoiceManager : MonoBehaviour
         connectionLine.enabled = true;
     }
     
-    private ItemType SelectRandomItem(PlayerWeaponManager weaponManager, ItemType excludeItem = null)
+    // No longer requires weaponManager
+    private ItemType SelectRandomItem(ItemType excludeItem = null)
     {
         List<ItemType> availableItems = new List<ItemType>();
         
@@ -90,22 +87,10 @@ public class ItemChoiceManager : MonoBehaviour
             // Skip excluded item
             if (item == excludeItem) continue;
             
-            // Skip weapons player already owns
-            if (item.category == ItemCategory.Weapon && weaponManager != null)
-            {
-                if (weaponManager.OwnsWeapon(item.weaponData))
-                    continue;
-            }
-            
-            // Filter by weapon/non-weapon based on roll
-            if (rollWeapon && item.category == ItemCategory.Weapon)
-            {
-                availableItems.Add(item);
-            }
-            else if (!rollWeapon && item.category != ItemCategory.Weapon)
-            {
-                availableItems.Add(item);
-            }
+            // If you want to allow only stat upgrades, filter here:
+            if (!rollWeapon && item.category == ItemCategory.StatUpgrade) availableItems.Add(item);
+            else if (rollWeapon && item.category == ItemCategory.Weapon) availableItems.Add(item);
+            else if (item.category == ItemCategory.Consumable) availableItems.Add(item); // Always let consumable fill if needed
         }
         
         // If no items available (e.g., all weapons owned), fall back to stat upgrades
@@ -114,10 +99,7 @@ public class ItemChoiceManager : MonoBehaviour
             foreach (ItemType item in allItems)
             {
                 if (item == excludeItem) continue;
-                if (item.category != ItemCategory.Weapon)
-                {
-                    availableItems.Add(item);
-                }
+                availableItems.Add(item);
             }
         }
         

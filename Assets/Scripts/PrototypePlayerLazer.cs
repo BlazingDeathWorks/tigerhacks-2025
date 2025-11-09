@@ -10,18 +10,54 @@ public class PrototypePlayerLazer : MonoBehaviour
     public int maxBounces = 5;             // Number of reflections
     public LayerMask reflectionMask;       // Layers the laser can hit
 
+    [Header("Ammo Settings")]
+    public int maxAmmo = 200;
+    public int currentAmmo;
+    public float ammoConsumptionRate = 40f; // Ammo consumed per second
+
     private LineRenderer lineRenderer;
     private readonly List<Vector3> laserPoints = new List<Vector3>();
 
     void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = 0;
+        currentAmmo = maxAmmo;
     }
 
-    void FixedUpdate()
+    void OnEnable()
     {
-        DrawLaser();
+        // This is called when the weapon is switched to.
+        // You might want to update UI here.
+        // We won't reset ammo on switch, so it persists.
+    }
+    
+    void OnDisable()
+    {
+        // Deactivate the laser when switching away from this weapon
+        if (lineRenderer != null)
+        {
+            lineRenderer.enabled = false;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButton(0) && currentAmmo > 0)
+        {
+            if (!lineRenderer.enabled)
+            {
+                lineRenderer.enabled = true;
+            }
+            DrawLaser();
+            currentAmmo = (int)Mathf.Max(0, currentAmmo - ammoConsumptionRate * Time.deltaTime);
+        }
+        else
+        {
+            if (lineRenderer.enabled)
+            {
+                lineRenderer.enabled = false;
+            }
+        }
     }
 
     void DrawLaser()

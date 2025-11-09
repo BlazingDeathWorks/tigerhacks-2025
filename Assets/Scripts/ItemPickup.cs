@@ -69,11 +69,10 @@ public class ItemPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerStatsManager statsManager = other.GetComponent<PlayerStatsManager>();
-            PlayerWeaponManager weaponManager = other.GetComponent<PlayerWeaponManager>();
             
-            if (statsManager != null && weaponManager != null)
+            if (statsManager != null)
             {
-                ApplyItem(statsManager, weaponManager);
+                ApplyItem(statsManager);
                 
                 // Notify choice manager
                 if (choiceManager != null)
@@ -99,21 +98,13 @@ public class ItemPickup : MonoBehaviour
         }
     }
     
-    private void ApplyItem(PlayerStatsManager stats, PlayerWeaponManager weapons)
+    private void ApplyItem(PlayerStatsManager stats)
     {
         switch (itemData.category)
         {
             case ItemCategory.StatUpgrade:
                 stats.ApplyStatUpgrade(itemData.statType, itemData.statValue, itemData.isPercentage);
                 Debug.Log($"Applied {itemData.itemName}: {itemData.statType} + {itemData.statValue}");
-                break;
-                
-            case ItemCategory.Weapon:
-                if (itemData.weaponData != null)
-                {
-                    weapons.AddWeapon(itemData.weaponData);
-                    Debug.Log($"Picked up weapon: {itemData.weaponData.weaponName}");
-                }
                 break;
                 
             case ItemCategory.Consumable:

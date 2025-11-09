@@ -282,6 +282,12 @@ public class EthanRoom : MonoBehaviour
             
         } else
         {
+
+            //update the progress params
+            ProgressScript.Instance.roomCount += 6;
+            ProgressScript.Instance.branchMaxCount += 1;
+            ProgressScript.Instance.endDistance += 2;
+
             //TODO add some sort of animation here. maybe we wait for a boss death animation and then fade out the screen
             //then we transition to the next level
             mapGenerator.GetComponent<MapGeneratorScript>().FadeOut();

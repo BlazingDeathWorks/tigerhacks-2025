@@ -12,10 +12,10 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject startRoomTemplate;
     [SerializeField] private GameObject endRoomTemplate;
-    [SerializeField] private int bossManhattenDistance;
-    [SerializeField] private int minBranchSize;
-    [SerializeField] private int maxBranchSize;
-    [SerializeField] private int maxRoomCount;
+    //[SerializeField] private int bossManhattenDistance;
+    //[SerializeField] private int minBranchSize;
+    //[SerializeField] private int maxBranchSize;
+    //[SerializeField] private int maxRoomCount;
     [SerializeField] private string nextSceneName;
     [SerializeField] private Image fadeImage;
 
@@ -343,6 +343,12 @@ public class MapGeneratorScript : MonoBehaviour
     {
         //Choose location of boss room
         //choose a random range of our manhatten distance to be x, then randomly make it negative, 
+
+        int bossManhattenDistance = ProgressScript.Instance.endDistance;
+        int maxRoomCount = ProgressScript.Instance.roomCount;
+        int minBranchSize = ProgressScript.Instance.branchMinCount;
+        int maxBranchSize = ProgressScript.Instance.branchMaxCount;
+
         int x = UnityEngine.Random.Range(0, bossManhattenDistance);
         int y = bossManhattenDistance - x;
         if (UnityEngine.Random.value > 0.5)

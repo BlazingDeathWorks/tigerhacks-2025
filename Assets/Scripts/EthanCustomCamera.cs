@@ -39,8 +39,8 @@ public class EthanCustomCamera : MonoBehaviour
     {
         if (transitionStatus == 1)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(targetX, targetY, -10), Time.deltaTime * 4.0f);
-            if (Vector3.Distance(transform.position, new Vector3(targetX, targetY, -10)) < 3f) 
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetX, targetY, -10), Time.deltaTime * 85.0f);
+            if (Vector3.Distance(transform.position, new Vector3(targetX, targetY, -10)) < .1f) 
             {
                 UnityEngine.Debug.Log("Camera reached end position");
                 transform.position = new Vector3(targetX, targetY, -10);

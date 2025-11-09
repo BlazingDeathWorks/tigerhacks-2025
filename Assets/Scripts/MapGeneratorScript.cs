@@ -46,12 +46,13 @@ public class MapGeneratorScript : MonoBehaviour
         rooms[start] = Instantiate(roomPrefab, new Vector3(start.x, start.y, 0f), Quaternion.identity);
         rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player);
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
+        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player);
         rooms[start].GetComponent<EthanRoom>().roomActive = true;
         //TEMP CODE TO COLOR START AND END
-        SpriteRenderer spriteRenderer = rooms[end].transform.GetChild(0).GetComponent<SpriteRenderer>();
-        spriteRenderer.color = new Color(0f, 0f, 1f, 0.5f);
-        SpriteRenderer spriteRenderer2 = rooms[start].transform.GetChild(0).GetComponent<SpriteRenderer>();
-        spriteRenderer2.color = new Color(0f, 1f, 0f, 0.5f);
+        //SpriteRenderer spriteRenderer = rooms[end].transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //spriteRenderer.color = new Color(0f, 0f, 1f, 0.5f);
+        //SpriteRenderer spriteRenderer2 = rooms[start].transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //spriteRenderer2.color = new Color(0f, 1f, 0f, 0.5f);
 
 
         //just based on the orientation of end relative to the current location, roll a weighted coin

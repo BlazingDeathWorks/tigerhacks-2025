@@ -264,7 +264,26 @@ public class EthanRoom : MonoBehaviour
                     //now wait until the camera transition
                     UnityEngine.Debug.Log("Running camera transition");
                     Camera.main.GetComponent<EthanCustomCamera>().runCameraTransition(previousActiveRoom);
+                    
+
+                    switch (previousActiveRoom)
+                    {
+                        case 0: //top
+                            player.GetComponent<PlayerController>().TeleportToRelativePositionLocation(0, -1);
+                            break;
+                        case 1: //bottom
+                            player.GetComponent<PlayerController>().TeleportToRelativePositionLocation(0, 1);
+                            break;
+                        case 2: //left
+                            player.GetComponent<PlayerController>().TeleportToRelativePositionLocation(1, 0);
+                            break;
+                        case 3: //right
+                            player.GetComponent<PlayerController>().TeleportToRelativePositionLocation(-1, 0);
+                            break;
+                    }
+
                     break;
+
                 case 1: //actively transitioning, dont do anything
                     break;
                 case 2: //transition finished
@@ -275,8 +294,10 @@ public class EthanRoom : MonoBehaviour
                     triggerRoomChange = false;
 
 
-                    //fr now, just center the player
-                    player.GetComponent<PlayerController>().TeleportToLocation(transform.position);
+                    //for now, just center the player
+                    //tell the previous room to become unactive
+                    
+                    //player.GetComponent<PlayerController>().TeleportToLocation(transform.position);
 
                     //unlock player controls
                     player.GetComponent<PlayerController>().UnlockMovement();

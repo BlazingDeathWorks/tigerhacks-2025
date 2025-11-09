@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     private float dashCooldownRemaining = 0f;
     private Vector2 dashDirection;
 
+    private float TargetX;
+    private float TargetY;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -46,7 +49,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!movementEnabled) return;
+        if (!movementEnabled)
+        {
+            if (TargetX != 0 && TargetY != 0)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(TargetX, TargetY, transform.position.z), Time.deltaTime * 85.0f);
+            }
+            return;
+        }
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
         if (moveInput.magnitude > 1f) moveInput.Normalize();
@@ -69,13 +79,19 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void TeleportToLocation(Vector3 loc)
+    public void TeleportToRelativePositionLocation(int x, int y) //update the target x and y to some relative distance from the current position
     {
-        transform.position = loc;
+        TargetX = transform.position.x;
+        TargetY = transform.position.y;
+        if (x != 0) TargetX += x * 10;
+        if (y != 0) TargetY += y * 10;
+        
     }
 
     public void LockMovement()
     {
+        TargetX = 0;
+        TargetY = 0;
         movementEnabled = false;
         rb.linearVelocity = new Vector2(0, 0);
     }

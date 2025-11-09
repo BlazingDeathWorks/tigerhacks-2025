@@ -62,6 +62,8 @@ MonoBehaviour:
   bottomRoom: {fileID: 0}
   roomTemplate: {fileID: 0}
   itemChoiceManager: {fileID: 2883207706184251462}
+  boss: {fileID: 0}
+  nextSceneName: 
   isBossRoom: 0
   isStartRoom: 0
   roomCleared: 0
@@ -455,7 +457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6755888796597281804
 Transform:
   m_ObjectHideFlags: 0

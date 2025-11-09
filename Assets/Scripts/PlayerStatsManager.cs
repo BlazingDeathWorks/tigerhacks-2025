@@ -129,6 +129,12 @@ public class PlayerStatsManager : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player died!");
+        //TODO black out everything except the player
+
+
+        //TODO fade the player to black
+
+
         // TODO: Implement death logic
     }
 }

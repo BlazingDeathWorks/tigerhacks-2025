@@ -303,3 +303,10 @@ MonoBehaviour:
   _spiralRate: 3
   _spiralTime: 5
   _tertiarySpiralTime: 3
+  _moveSpeed: 8
+  _probeDistance: 2
+  _pauseTime: 0.5
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _raycastLength: 10

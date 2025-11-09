@@ -23,8 +23,8 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
     
     [SerializeField] private float _wallDetectionDistance = 0.5f; // Smaller raycast to detect when near wall
     
-    // State management for proper wall reaching behavior
-    private enum LancerState { MovingToWall, AtWall, ProbingEdge }
+    // Simplified state management - only two states needed
+    private enum LancerState { MovingToWall, ProbingEdge }
     private LancerState _currentState = LancerState.MovingToWall;
     
     // Sweeping variables
@@ -35,20 +35,25 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
     [SerializeField] private float _sweepLaserRate = 0.4f; // Fire laser every 0.4 seconds while sweeping
     private float _lastSweepLaserTime;
     
-    // Edge duration requirement
-    [SerializeField] private float _minimumEdgeTime = 5f; // Must stay on edge for 5 seconds
-    private float _edgeStartTime;
-    
-    // Current wall tracking for adjacent-only movement
-    private EdgeDirection _currentWall;
+    // Single edge assignment - never changes
+    private EdgeDirection _assignedWall;
 
     private void Start()
     {
-        // Initialize with a random starting wall
-        _currentWall = (EdgeDirection)Random.Range(0, 4);
+        // Pick one wall and stick with it forever
+        _assignedWall = (EdgeDirection)Random.Range(0, 4);
         
-        // Pick initial direction (will be adjacent to starting position)
-        PickNewWallDirection();
+        // Set movement direction to reach assigned wall
+        moveDirection = _assignedWall switch
+        {
+            EdgeDirection.Up => Vector2.up,
+            EdgeDirection.Right => Vector2.right,
+            EdgeDirection.Down => Vector2.down,
+            EdgeDirection.Left => Vector2.left,
+            _ => Vector2.up
+        };
+        
+        Debug.Log($"Lancer assigned to {_assignedWall} wall forever");
     }
 
     private void FixedUpdate()
@@ -57,10 +62,6 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
         {
             case LancerState.MovingToWall:
                 HandleMovingToWall();
-                break;
-                
-            case LancerState.AtWall:
-                HandleAtWall();
                 break;
                 
             case LancerState.ProbingEdge:
@@ -75,36 +76,18 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
         RaycastHit2D wallCheck = Physics2D.Raycast(transform.position, moveDirection, _wallDetectionDistance, _laserMask);
         if (wallCheck.collider != null)
         {
-            // Update current wall based on movement direction
-            _currentWall = moveDirection switch
-            {
-                var dir when dir == Vector2.up => EdgeDirection.Up,
-                var dir when dir == Vector2.right => EdgeDirection.Right,
-                var dir when dir == Vector2.down => EdgeDirection.Down,
-                var dir when dir == Vector2.left => EdgeDirection.Left,
-                _ => EdgeDirection.Up
-            };
-            
-            // We've reached the wall - rotate based on which wall we approached
+            // We've reached the wall - rotate and start probing immediately
             RotateBasedOnWallDirection();
             ObjectPool.Pool(this); // Fire the laser
-            _currentState = LancerState.AtWall;
-            Debug.Log($"Reached wall: {_currentWall}, firing laser");
+            SetupEdgeSweeping();
+            _currentState = LancerState.ProbingEdge;
+            Debug.Log($"Reached {_assignedWall} wall, starting eternal edge probing");
         }
         else
         {
             // Continue moving towards the wall
             transform.position += (Vector3)(moveDirection * moveSpeed * Time.fixedDeltaTime);
         }
-    }
-    
-    private void HandleAtWall()
-    {
-        // Set up sweeping along the edge
-        SetupEdgeSweeping();
-        _edgeStartTime = Time.time; // Record when we started this edge
-        _currentState = LancerState.ProbingEdge;
-        Debug.Log("Starting edge probe - must stay for " + _minimumEdgeTime + " seconds");
     }
     
     private void HandleProbingEdge()
@@ -134,28 +117,14 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
                 Debug.Log("Firing laser while sweeping");
             }
             
-            // Check if sweep is complete
+            // Check if sweep is complete - just reverse direction and keep going forever
             if (Vector2.Distance(transform.position, _sweepEndPos) < 0.1f)
             {
-                // Finished one sweep direction, but check if we've been on this edge long enough
-                float timeOnEdge = Time.time - _edgeStartTime;
-                
-                if (timeOnEdge >= _minimumEdgeTime)
-                {
-                    // We've spent enough time on this edge, move to next wall
-                    _isSweeping = false;
-                    PickNewWallDirection();
-                    _currentState = LancerState.MovingToWall;
-                    Debug.Log($"Finished edge after {timeOnEdge:F1} seconds, picking new wall");
-                }
-                else
-                {
-                    // Haven't been on edge long enough, reverse sweep direction
-                    Vector2 temp = _sweepStartPos;
-                    _sweepStartPos = _sweepEndPos;
-                    _sweepEndPos = temp;
-                    Debug.Log($"Only {timeOnEdge:F1}s on edge, need {_minimumEdgeTime}s - reversing sweep");
-                }
+                // Reverse sweep direction and continue forever on this edge
+                Vector2 temp = _sweepStartPos;
+                _sweepStartPos = _sweepEndPos;
+                _sweepEndPos = temp;
+                Debug.Log("Reached end of sweep, reversing direction - staying on this edge forever");
             }
         }
     }
@@ -208,78 +177,6 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
         _isSweeping = false;
         
         Debug.Log($"Full edge sweep from {_sweepStartPos} to {_sweepEndPos} (total distance: {Vector2.Distance(_sweepStartPos, _sweepEndPos):F1})");
-    }
-    
-    private void PickNewWallDirection()
-    {
-        // Get only adjacent walls (neighbors) based on current wall
-        EdgeDirection[] adjacentWalls = GetAdjacentWalls(_currentWall);
-        
-        // Raycast only in adjacent directions
-        Vector2[] directions = new Vector2[] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-        float[] distances = new float[adjacentWalls.Length];
-        
-        for (int i = 0; i < adjacentWalls.Length; i++)
-        {
-            int dirIndex = (int)adjacentWalls[i];
-            RaycastHit2D hit = Physics2D.Raycast(_spawnPoint.position, directions[dirIndex], 100f, _laserMask);
-            distances[i] = hit.collider ? hit.distance : 100f;
-        }
-        
-        // Pick from adjacent walls based on distance weighting
-        EdgeDirection chosen = PickAdjacentWallByDistance(adjacentWalls, distances);
-        _currentWall = chosen; // Update current wall
-        
-        // Convert enum to Vector2
-        moveDirection = chosen switch
-        {
-            EdgeDirection.Up => Vector2.up,
-            EdgeDirection.Right => Vector2.right,
-            EdgeDirection.Down => Vector2.down,
-            EdgeDirection.Left => Vector2.left,
-            _ => Vector2.zero
-        };
-        
-        Debug.Log($"Current wall: {_currentWall}, chose adjacent wall: {chosen}");
-    }
-    
-    private EdgeDirection[] GetAdjacentWalls(EdgeDirection currentWall)
-    {
-        // Return only the two adjacent walls (no diagonal movement)
-        return currentWall switch
-        {
-            EdgeDirection.Up => new EdgeDirection[] { EdgeDirection.Left, EdgeDirection.Right },
-            EdgeDirection.Right => new EdgeDirection[] { EdgeDirection.Up, EdgeDirection.Down },
-            EdgeDirection.Down => new EdgeDirection[] { EdgeDirection.Left, EdgeDirection.Right },
-            EdgeDirection.Left => new EdgeDirection[] { EdgeDirection.Up, EdgeDirection.Down },
-            _ => new EdgeDirection[] { EdgeDirection.Up, EdgeDirection.Right } // fallback
-        };
-    }
-    
-    private EdgeDirection PickAdjacentWallByDistance(EdgeDirection[] adjacentWalls, float[] distances)
-    {
-        // Weighted random selection from adjacent walls only
-        float totalDistance = 0f;
-        foreach (float d in distances) 
-            totalDistance += d;
-        
-        if (totalDistance > 0f)
-        {
-            float rand = Random.Range(0f, totalDistance);
-            float sum = 0f;
-            
-            for (int i = 0; i < distances.Length; i++)
-            {
-                sum += distances[i];
-                if (rand <= sum)
-                {
-                    return adjacentWalls[i];
-                }
-            }
-        }
-        
-        // Fallback: return first adjacent wall
-        return adjacentWalls[0];
     }
 
     private void RotateBasedOnWallDirection()

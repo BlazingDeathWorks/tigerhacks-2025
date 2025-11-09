@@ -59,6 +59,8 @@ MonoBehaviour:
   rightRoom: {fileID: 0}
   topRoom: {fileID: 0}
   bottomRoom: {fileID: 0}
+  roomTemplate: {fileID: 0}
+  isBossRoom: 0
   roomCleared: 0
   roomActive: 0
   previousActiveRoom: -1
@@ -109,7 +111,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 5756380681857427472, guid: 912cae59384e9374fb7b34aad192421f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

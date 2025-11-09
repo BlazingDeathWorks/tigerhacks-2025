@@ -273,6 +273,8 @@ public class EthanRoom : MonoBehaviour
             }
         }
 
+        //Check if all the enemies are daed
+
 
         if (triggerRoomChange && previousActiveRoom != -1) //we want to transition to this room,
         {

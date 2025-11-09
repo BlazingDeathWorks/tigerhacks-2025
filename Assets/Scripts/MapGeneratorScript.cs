@@ -8,6 +8,9 @@ public class MapGeneratorScript : MonoBehaviour
 {
     [SerializeField] private GameObject roomPrefab;
     [SerializeField] private GameObject player;
+
+    public GameObject[] availableMapTemplates;
+
     private Dictionary<Vector2Int, GameObject> rooms = new Dictionary<Vector2Int, GameObject>();
     private int roomCount = 0;
     private int targetRoomCount;
@@ -24,6 +27,10 @@ public class MapGeneratorScript : MonoBehaviour
         this.deadEndBranchLengthMax= deadEndBranchLengthMax;
         this.deadEndBranchLengthMin= deadEndBranchLengthMin;
         this.end = end;
+
+
+        //init the avaialble map templates
+        availableMapTemplates = Resources.LoadAll<GameObject>("Templates");
 
         //Generate the main path and place the start and end
         GenerateMainPath(start, end);
@@ -44,9 +51,13 @@ public class MapGeneratorScript : MonoBehaviour
     {
         //Place the start and end rooms
         rooms[start] = Instantiate(roomPrefab, new Vector3(start.x, start.y, 0f), Quaternion.identity);
-        rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player);
+        rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
+
+        //TODO add special game objects for start and end room behaviors
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
-        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player);
+        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
+
+
         rooms[start].GetComponent<EthanRoom>().roomActive = true;
         //TEMP CODE TO COLOR START AND END
         //SpriteRenderer spriteRenderer = rooms[end].transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -62,14 +73,24 @@ public class MapGeneratorScript : MonoBehaviour
         {
             Vector2Int nextPosition = currentPosition + GetWeightedDirection(currentPosition, end);
             if (nextPosition != end)
-            {
+            {   
+                // instantiate room
                 rooms[nextPosition] = Instantiate(roomPrefab, new Vector3(nextPosition.x, nextPosition.y, 0f), Quaternion.identity);
                 EthanRoom roomScript = rooms[nextPosition].GetComponent<EthanRoom>();
-                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player);
-                targetRoomCount++;
+
+                // Add a random room template
+                GameObject newChild = Instantiate(availableMapTemplates[UnityEngine.Random.Range(0, availableMapTemplates.Length)], new Vector3(nextPosition.x, nextPosition.y), Quaternion.identity);
+                newChild.SetActive(false);
+                newChild.transform.SetParent(rooms[nextPosition].transform);
+
+                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player, newChild);
+
+
+                // Increment the target room count
+                roomCount++;
             }
             currentPosition = nextPosition;
-            if (roomCount > 5) break;
+            //if (roomCount > 5) break;
         }
         
         //for each room we place, set its door accordingly, we may need to add more later
@@ -188,7 +209,16 @@ public class MapGeneratorScript : MonoBehaviour
     {
         rooms[location] = Instantiate(roomPrefab, new Vector3(location.x, location.y, 0f), Quaternion.identity);
         EthanRoom roomScript = rooms[location].GetComponent<EthanRoom>();
-        roomScript.Initialize(rooms, location, ROOM_SIZE, this.player);
+
+        // Add a random room template
+        GameObject newChild = Instantiate(availableMapTemplates[UnityEngine.Random.Range(0, availableMapTemplates.Length)], new Vector3(location.x, location.y), Quaternion.identity);
+        newChild.SetActive(false);
+        newChild.transform.SetParent(rooms[location].transform);
+
+        roomScript.Initialize(rooms, location, ROOM_SIZE, this.player, newChild);
+
+
+
         roomCount++;
     }
 

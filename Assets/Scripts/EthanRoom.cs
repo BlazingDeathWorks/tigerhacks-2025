@@ -13,13 +13,16 @@ public class EthanRoom : MonoBehaviour
     public GameObject topRoom;
     public GameObject bottomRoom;
 
+    public GameObject roomTemplate;
+
     public bool roomCleared = false;
     public bool roomActive = false;
     public int previousActiveRoom = -1;
     public bool triggerRoomChange = false;
     
-    public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE, GameObject player)
+    public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE, GameObject player, GameObject roomTemplate)
     {
+        this.roomTemplate = roomTemplate;
         //Make sure all corners are properly set
         Vector2Int topLocation = location + new Vector2Int(0, ROOM_SIZE);
         if (rooms.ContainsKey(topLocation)) //if there is a room above
@@ -152,6 +155,15 @@ public class EthanRoom : MonoBehaviour
         toggleRightDoor(true);
         toggleLeftDoor(true);
         this.roomActive = false;
+
+        if (this.roomTemplate != null)
+        {
+            this.roomTemplate.SetActive(false);
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Did not find base room template");
+        }
     }
 
 
@@ -173,6 +185,14 @@ public class EthanRoom : MonoBehaviour
     //Should be called when we want to enter the room
     public void StartEnterRoom(int enteringDirection) //0 == top, 1 == bottom, 2 == left, 3 == right
     {
+        //Transform childTransform = transform.Find("BaseRoomTemplate");
+        if (this.roomTemplate != null)
+        {
+            this.roomTemplate.SetActive(true);
+        } else
+        {
+            UnityEngine.Debug.Log("Did not find base room template");
+        }
         if (this.roomCleared)
         {
             this.toggleLeftDoor(false); this.toggleRightDoor(false);
@@ -294,7 +314,6 @@ public class EthanRoom : MonoBehaviour
                     triggerRoomChange = false;
 
 
-                    //for now, just center the player
                     //tell the previous room to become unactive
                     
                     //player.GetComponent<PlayerController>().TeleportToLocation(transform.position);

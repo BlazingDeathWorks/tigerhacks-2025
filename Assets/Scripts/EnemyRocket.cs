@@ -11,17 +11,20 @@ public class EnemyRocket : MonoBehaviour, IObjectPoolable<EnemyRocket>
     [SerializeField] private float maxSpeed = 20f;          // Clamp to avoid infinite speed
 
     private Rigidbody2D rb;
-    private EnemyRocket _instance = null;
     private float lifetime; // time since spawned
     private float _lifetime = 3;
     private float _timeSinceAlive;
-    public void OnReturn() => gameObject.SetActive(false);
+    public void OnReturn()
+    {
+        gameObject.SetActive(false);
+        _timeSinceAlive = 0;
+        lifetime = 0;
+    }
 
-    public EnemyRocket ReturnComponent() => _instance;
+    public EnemyRocket ReturnComponent() => this;
 
     private void Awake()
     {
-        _instance = this;
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -30,8 +33,6 @@ public class EnemyRocket : MonoBehaviour, IObjectPoolable<EnemyRocket>
         _timeSinceAlive += Time.deltaTime;
         if (_timeSinceAlive >= _lifetime)
         {
-            _timeSinceAlive = 0;
-            lifetime = 0;
             ObjectPool.Return(this);
         }
     }

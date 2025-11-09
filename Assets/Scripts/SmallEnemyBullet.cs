@@ -9,7 +9,11 @@ public class SmallEnemyBullet : MonoBehaviour, IObjectPoolable<SmallEnemyBullet>
     private float _lifetime = 3;
     private float _timeSinceAlive = 0;
 
-    public void OnReturn() => gameObject.SetActive(false);
+    public void OnReturn()
+    {
+        _timeSinceAlive = 0;
+        gameObject.SetActive(false);
+    }
 
     public SmallEnemyBullet ReturnComponent() => _instance;
 

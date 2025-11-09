@@ -45,14 +45,12 @@ public class BaseRoomTemplate : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _enabled = false;
         //Build an array of children elements that are enemies
         for (int i = 0; i < transform.childCount; i++)
         {
             Transform childTransform = transform.GetChild(i);
 
-            if (childTransform.Find("EnemyCrossfire") != null || childTransform.Find("EnemyGnat") != null
-                || childTransform.Find("EnemyLancer") != null)
+            if ((childTransform.name != "Background") && (!childTransform.name.Contains("Spike")))
             {
                 enemies.Add(childTransform.gameObject);
             }
@@ -62,7 +60,8 @@ public class BaseRoomTemplate : MonoBehaviour
             UnityEngine.Debug.Log("no enemies found!");
         } else
         {
-            UnityEngine.Debug.Log("enemies found!");    
+            UnityEngine.Debug.Log("enemies found!");
+            UnityEngine.Debug.Log(enemies[0]);
         }
 
 
@@ -73,12 +72,18 @@ public class BaseRoomTemplate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_enabled)
+        {
+            //UnityEngine.Debug.Log("GOT HHHHERE");
+        }
         if (_enabled && !enemiesDefeated)
         {
+            //UnityEngine.Debug.Log("GOT HERE");
             bool allDead = true;
             foreach (GameObject enemy in enemies)
             {
                 if (enemy.activeSelf) allDead = false;
+                //UnityEngine.Debug.Log(enemy.activeSelf);
             }
             if (allDead)
             {

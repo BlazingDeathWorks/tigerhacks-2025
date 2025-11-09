@@ -4,11 +4,11 @@ public class ProgressScript : MonoBehaviour
 {
     public static ProgressScript Instance { get; private set; }
 
-    public int roomCount = 5;
+    public int roomCount = 4;
     public int branchMinCount = 1;
     public int branchMaxCount = 2;
     public int endDistance = 4;
-    public float HealthMultiplier = 0.5f;
+    public float HealthMultiplier = 0.25f;
 
     private void Awake()
     {

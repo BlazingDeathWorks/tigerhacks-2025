@@ -74,14 +74,14 @@ public class MapGeneratorScript : MonoBehaviour
 
         //TODO add special game objects for start and end room behaviors
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
-        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null, transform.gameObject);
-        rooms[end].GetComponent<EthanRoom>().isBossRoom = true;
-        rooms[end].GetComponent<EthanRoom>().nextSceneName = this.nextSceneName;
 
         GameObject __newChild = Instantiate(endRoomTemplate, new Vector3(end.x, end.y), Quaternion.identity);
-
         __newChild.transform.SetParent(rooms[end].transform);
         __newChild.SetActive(false);
+
+        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, __newChild, transform.gameObject);
+        rooms[end].GetComponent<EthanRoom>().isBossRoom = true;
+        rooms[end].GetComponent<EthanRoom>().nextSceneName = this.nextSceneName;
 
 
         rooms[start].GetComponent<EthanRoom>().roomActive = true;

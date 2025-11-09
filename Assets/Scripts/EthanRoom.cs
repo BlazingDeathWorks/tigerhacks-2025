@@ -18,6 +18,8 @@ public class EthanRoom : MonoBehaviour
 
     public GameObject itemChoiceManager;
 
+    public GameObject mapGenerator;
+
     public GameObject boss;
 
     public string nextSceneName;
@@ -28,10 +30,14 @@ public class EthanRoom : MonoBehaviour
     public bool roomActive = false;
     public int previousActiveRoom = -1;
     public bool triggerRoomChange = false;
+
+    bool queueSceneChange = false;
+    float timeSinceMapChangeStart = 0;
     
-    public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE, GameObject player, GameObject roomTemplate)
+    public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE, GameObject player, GameObject roomTemplate, GameObject mapGenerator)
     {
         this.roomTemplate = roomTemplate;
+        this.mapGenerator = mapGenerator;
         //Make sure all corners are properly set
         Vector2Int topLocation = location + new Vector2Int(0, ROOM_SIZE);
         if (rooms.ContainsKey(topLocation)) //if there is a room above
@@ -195,13 +201,7 @@ public class EthanRoom : MonoBehaviour
     public void StartEnterRoom(int enteringDirection) //0 == top, 1 == bottom, 2 == left, 3 == right
     {
         //Transform childTransform = transform.Find("BaseRoomTemplate");
-        if (this.roomTemplate != null)
-        {
-            this.roomTemplate.SetActive(true);
-        } else
-        {
-            UnityEngine.Debug.Log("Did not find base room template");
-        }
+        
         if (this.roomCleared)
         {
             this.toggleLeftDoor(false); this.toggleRightDoor(false);
@@ -232,6 +232,15 @@ public class EthanRoom : MonoBehaviour
     //Should be called after we finish the room entering animation
     public void EndEnterRoom(int enteringDirection)
     {
+
+        if (this.roomTemplate != null)
+        {
+            this.roomTemplate.SetActive(true);
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Did not find base room template");
+        }
 
         if (!this.roomCleared)
         {
@@ -275,7 +284,10 @@ public class EthanRoom : MonoBehaviour
         {
             //TODO add some sort of animation here. maybe we wait for a boss death animation and then fade out the screen
             //then we transition to the next level
-            SceneManager.LoadScene(nextSceneName);
+            mapGenerator.GetComponent<MapGeneratorScript>().FadeOut();
+
+            queueSceneChange = true;
+            //SceneManager.LoadScene(nextSceneName);
         }
 
     }
@@ -291,6 +303,16 @@ public class EthanRoom : MonoBehaviour
             {
                 ClearRoom();
             }
+        }
+
+        if (queueSceneChange)
+        {
+            timeSinceMapChangeStart += Time.deltaTime;
+        }
+
+        if (timeSinceMapChangeStart > 2)
+        {
+            SceneManager.LoadScene(nextSceneName);
         }
 
         //Check if all the enemies are daed

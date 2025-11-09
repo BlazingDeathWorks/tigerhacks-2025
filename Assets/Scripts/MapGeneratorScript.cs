@@ -62,7 +62,7 @@ public class MapGeneratorScript : MonoBehaviour
     {
         //Place the start and end rooms
         rooms[start] = Instantiate(roomPrefab, new Vector3(start.x, start.y, 0f), Quaternion.identity);
-        rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
+        rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null, transform.gameObject);
         rooms[start].GetComponent<EthanRoom>().isStartRoom = true;
 
         GameObject newChild = Instantiate(startRoomTemplate, new Vector3(start.x, start.y), Quaternion.identity);
@@ -74,7 +74,7 @@ public class MapGeneratorScript : MonoBehaviour
 
         //TODO add special game objects for start and end room behaviors
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
-        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
+        rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null, transform.gameObject);
         rooms[end].GetComponent<EthanRoom>().isBossRoom = true;
         rooms[end].GetComponent<EthanRoom>().nextSceneName = this.nextSceneName;
 
@@ -109,7 +109,7 @@ public class MapGeneratorScript : MonoBehaviour
                 _newChild.SetActive(false);
                 _newChild.transform.SetParent(rooms[nextPosition].transform);
 
-                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player, _newChild);
+                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player, _newChild, transform.gameObject);
 
 
                 // Increment the target room count
@@ -241,7 +241,7 @@ public class MapGeneratorScript : MonoBehaviour
         newChild.SetActive(false);
         newChild.transform.SetParent(rooms[location].transform);
 
-        roomScript.Initialize(rooms, location, ROOM_SIZE, this.player, newChild);
+        roomScript.Initialize(rooms, location, ROOM_SIZE, this.player, newChild, transform.gameObject);
 
 
 
@@ -365,12 +365,12 @@ public class MapGeneratorScript : MonoBehaviour
         FadeIn();
     }
 
-    void FadeIn()
+    public void FadeIn()
     {
         StartCoroutine(FadeRoutine(1, 0, 1));
     }
 
-    void FadeOut()
+    public void FadeOut()
     {
         StartCoroutine(FadeRoutine(0, 1, 1));
     }

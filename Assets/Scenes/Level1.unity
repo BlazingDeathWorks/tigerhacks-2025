@@ -397,10 +397,10 @@ MonoBehaviour:
   player: {fileID: 1628415440}
   startRoomTemplate: {fileID: 8745395880772889455, guid: c9d6c40c62392774481124803b3c0a64, type: 3}
   endRoomTemplate: {fileID: 8564279727344003183, guid: 66fa4d669d022ec44ab298e0b6013f15, type: 3}
-  bossManhattenDistance: 5
+  bossManhattenDistance: 3
   minBranchSize: 1
   maxBranchSize: 3
-  maxRoomCount: 8
+  maxRoomCount: 2
   nextSceneName: Level2
   fadeImage: {fileID: 835931298}
   availableMapTemplates: []
@@ -1858,6 +1858,8 @@ MonoBehaviour:
   moveSpeedMultiplier: 1
   dashCooldownMultiplier: 1
   maxAmmoMultiplier: 1
+  MapGenerator: {fileID: 237068048}
+  nextLevelName: Level2
 --- !u!114 &1628415447
 MonoBehaviour:
   m_ObjectHideFlags: 0

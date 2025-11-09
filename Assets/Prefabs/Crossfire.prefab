@@ -293,8 +293,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52aa05b7218a8401caf9f6855d5672f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCrossfire
-  _largePrefab: {fileID: 7422353183802430855, guid: 64a51053b25ed4510856936a5046949e, type: 3}
-  _smallPrefab: {fileID: 778603102696276537, guid: 04f2de2a9ca014fa28d5b8d06a36098a, type: 3}
+  _largePrefab: {fileID: 0}
+  _smallPrefab: {fileID: 0}
   _spawnPoints:
   - {fileID: 8857721803392298409}
   - {fileID: 7370299207341632017}
@@ -323,4 +323,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9541ff5944ac4ae2847a5e923a142a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  Health: 10
+  Health: 20

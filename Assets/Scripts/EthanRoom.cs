@@ -274,6 +274,7 @@ public class EthanRoom : MonoBehaviour
             toggleRightDoor(false);
             toggleTopDoor(false);
             toggleBottomDoor(false);
+            this.player.GetComponent<PlayerStatsManager>().Heal(30);
             if (!this.isStartRoom)
             {
                 this.itemChoiceManager.SetActive(true);

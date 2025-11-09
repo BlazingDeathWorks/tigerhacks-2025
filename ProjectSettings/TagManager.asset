@@ -41,5 +41,11 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: FadeLayer
+    uniqueID: 3295007537
+    locked: 0
+  - name: Player
+    uniqueID: 377867631
+    locked: 0
   m_RenderingLayers:
   - Default

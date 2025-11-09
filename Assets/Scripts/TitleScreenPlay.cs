@@ -25,10 +25,10 @@ public class TitleScreenPlay : MonoBehaviour
         fadeImage.gameObject.SetActive(true); // Ensure the image is active
         float timer = 0;
 
-        while (timer < 3)
+        while (timer < 1)
         {
             timer += Time.deltaTime;
-            float alpha = Mathf.Lerp(0, 1, timer / 3);
+            float alpha = Mathf.Lerp(0, 1, timer / 1);
             Color newColor = fadeImage.color;
             newColor.a = alpha;
             fadeImage.color = newColor;
@@ -36,7 +36,7 @@ public class TitleScreenPlay : MonoBehaviour
         }
 
         Color finalColor = fadeImage.color;
-        finalColor.a = 1;
+        finalColor.a = 1.0f;
         fadeImage.color = finalColor;
         finishedScreenFade = true;
     }

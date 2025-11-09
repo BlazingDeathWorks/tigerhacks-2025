@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapGeneratorScript : MonoBehaviour
 {
@@ -15,6 +17,7 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private int maxBranchSize;
     [SerializeField] private int maxRoomCount;
     [SerializeField] private string nextSceneName;
+    [SerializeField] private Image fadeImage;
 
 
     public GameObject[] availableMapTemplates;
@@ -357,6 +360,41 @@ public class MapGeneratorScript : MonoBehaviour
         EthanRoom roomScript = roomtest.GetComponent<EthanRoom>();
         roomScript.Initialize(true, true, true, true);
         */
+
+        //Now that we've generated, quickly fade in
+        FadeIn();
+    }
+
+    void FadeIn()
+    {
+        StartCoroutine(FadeRoutine(1, 0));
+    }
+
+    void FadeOut()
+    {
+        StartCoroutine(FadeRoutine(0, 1));
+    }
+
+    private IEnumerator FadeRoutine(float startAlpha, float endAlpha)
+    {
+        float timer = 0f;
+        // Ensure the image starts at the correct color and alpha
+        Color currentColor = fadeImage.color;
+        currentColor.a = startAlpha;
+        fadeImage.color = currentColor;
+
+        while (timer < 1)
+        {
+            timer += Time.deltaTime;
+            float newAlpha = Mathf.Lerp(startAlpha, endAlpha, timer / 1);
+            currentColor.a = newAlpha;
+            fadeImage.color = currentColor;
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure the final alpha value is set precisely
+        currentColor.a = endAlpha;
+        fadeImage.color = currentColor;
     }
 
     // Update is called once per frame

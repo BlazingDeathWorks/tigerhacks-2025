@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f93bcc9019cf3444980d4c02af6487fd
+guid: b0d3888765a1d2445b75247f92ecc39b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 601101956931022308
-    second: ShipSprites_0
+      213: 6012713405212955673
+    second: crusher_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ShipSprites_0
+      name: crusher_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 490
-        height: 510
+        width: 48
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4ed6aa88b0b875800800000000000000
-      internalID: 601101956931022308
+      spriteID: 91492fd3cf2717350800000000000000
+      internalID: 6012713405212955673
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ShipSprites_0: 601101956931022308
+      crusher_0: 6012713405212955673
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,4 +1,8 @@
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlayerStatsManager : MonoBehaviour
 {
@@ -15,6 +19,14 @@ public class PlayerStatsManager : MonoBehaviour
     public float moveSpeedMultiplier = 1f;
     public float dashCooldownMultiplier = 1f;
     public float maxAmmoMultiplier = 1f;
+
+    [Header("Map Information")]
+    public GameObject MapGenerator;
+    public string nextLevelName;
+
+
+    private bool isDead = false;
+    private bool finishedCharFade = false;
     
     void Awake()
     {
@@ -27,6 +39,14 @@ public class PlayerStatsManager : MonoBehaviour
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateHealth(currentHealth, maxHealth);
+        }
+    }
+
+    void Update()
+    {
+        if (finishedCharFade)
+        {
+            SceneManager.LoadScene("TitleSene");
         }
     }
     
@@ -126,15 +146,45 @@ public class PlayerStatsManager : MonoBehaviour
         }
     }
     
+    private IEnumerator FadeOut()
+    {
+        SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+        float timer = 0f;
+        // Ensure the image starts at the correct color and alpha
+        Color currentColor = sprite.color;
+        currentColor.a = 1;
+        sprite.color = currentColor;
+
+        while (timer < 1)
+        {
+            timer += Time.deltaTime;
+            float newAlpha = Mathf.Lerp(1, 0, timer / 1);
+            currentColor.a = newAlpha;
+            sprite.color = currentColor;
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure the final alpha value is set precisely
+        currentColor.a = 0;
+        sprite.color = currentColor;
+        finishedCharFade = true;
+    }
+
     private void Die()
     {
-        Debug.Log("Player died!");
-        //TODO black out everything except the player
+        if (!isDead)
+        {
+            isDead = true;
+            UnityEngine.Debug.Log("Player died!");
+            //TODO black out everything except the player
+            GetComponent<PlayerController>().LockMovement();
+            MapGenerator.GetComponent<MapGeneratorScript>().FadeOutInstant();
+
+            //TODO fade the player to black
+            StartCoroutine(FadeOut());
 
 
-        //TODO fade the player to black
-
-
-        // TODO: Implement death logic
+            
+        }
     }
 }

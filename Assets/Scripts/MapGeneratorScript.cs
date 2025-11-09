@@ -367,15 +367,20 @@ public class MapGeneratorScript : MonoBehaviour
 
     void FadeIn()
     {
-        StartCoroutine(FadeRoutine(1, 0));
+        StartCoroutine(FadeRoutine(1, 0, 1));
     }
 
     void FadeOut()
     {
-        StartCoroutine(FadeRoutine(0, 1));
+        StartCoroutine(FadeRoutine(0, 1, 1));
     }
 
-    private IEnumerator FadeRoutine(float startAlpha, float endAlpha)
+    public void FadeOutInstant()
+    {
+        StartCoroutine(FadeRoutine(0, 1, .1f));
+    }
+
+    private IEnumerator FadeRoutine(float startAlpha, float endAlpha, float duration)
     {
         float timer = 0f;
         // Ensure the image starts at the correct color and alpha

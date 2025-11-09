@@ -7,7 +7,7 @@ public class EnemyLazer : MonoBehaviour, IObjectPoolable<EnemyLazer>
     public void OnReturn() => gameObject.SetActive(false);
 
     public EnemyLazer ReturnComponent() => this;
-    private float _lifetime = 2f;
+    private float _lifetime = 1f;
     private float _timeSinceAlive = 0;
 
     private void Update()

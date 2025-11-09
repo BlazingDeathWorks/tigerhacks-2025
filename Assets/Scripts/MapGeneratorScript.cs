@@ -8,6 +8,7 @@ public class MapGeneratorScript : MonoBehaviour
 {
     [SerializeField] private GameObject roomPrefab;
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject startRoomTemplate;
 
     public GameObject[] availableMapTemplates;
 
@@ -53,9 +54,18 @@ public class MapGeneratorScript : MonoBehaviour
         rooms[start] = Instantiate(roomPrefab, new Vector3(start.x, start.y, 0f), Quaternion.identity);
         rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
 
+        GameObject newChild = Instantiate(startRoomTemplate, new Vector3(start.x, start.y), Quaternion.identity);
+        
+        newChild.transform.SetParent(rooms[start].transform);
+        newChild.SetActive(true);
+
+
+
         //TODO add special game objects for start and end room behaviors
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
         rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
+        rooms[end].GetComponent<EthanRoom>().isBossRoom = true;
+
 
 
         rooms[start].GetComponent<EthanRoom>().roomActive = true;
@@ -79,11 +89,11 @@ public class MapGeneratorScript : MonoBehaviour
                 EthanRoom roomScript = rooms[nextPosition].GetComponent<EthanRoom>();
 
                 // Add a random room template
-                GameObject newChild = Instantiate(availableMapTemplates[UnityEngine.Random.Range(0, availableMapTemplates.Length)], new Vector3(nextPosition.x, nextPosition.y), Quaternion.identity);
-                newChild.SetActive(false);
-                newChild.transform.SetParent(rooms[nextPosition].transform);
+                GameObject _newChild = Instantiate(availableMapTemplates[UnityEngine.Random.Range(0, availableMapTemplates.Length)], new Vector3(nextPosition.x, nextPosition.y), Quaternion.identity);
+                _newChild.SetActive(false);
+                _newChild.transform.SetParent(rooms[nextPosition].transform);
 
-                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player, newChild);
+                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player, _newChild);
 
 
                 // Increment the target room count

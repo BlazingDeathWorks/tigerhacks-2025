@@ -15,6 +15,7 @@ public class EthanRoom : MonoBehaviour
 
     public GameObject roomTemplate;
 
+    public bool isBossRoom = false;
     public bool roomCleared = false;
     public bool roomActive = false;
     public int previousActiveRoom = -1;
@@ -249,10 +250,14 @@ public class EthanRoom : MonoBehaviour
     public void ClearRoom()
     {
         this.roomCleared = true;
-        toggleLeftDoor(false);
-        toggleRightDoor(false) ;
-        toggleTopDoor(false);
-        toggleBottomDoor(false);
+        if (!this.isBossRoom)
+        {
+            toggleLeftDoor(false);
+            toggleRightDoor(false);
+            toggleTopDoor(false);
+            toggleBottomDoor(false);
+        }
+
     }
 
     // Update is called once per frame

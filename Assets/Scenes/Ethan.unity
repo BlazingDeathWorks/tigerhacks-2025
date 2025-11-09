@@ -348,6 +348,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapGeneratorScript
   roomPrefab: {fileID: 1178151568787674932, guid: f0e302499451c0744927a99c70ab67ef, type: 3}
   player: {fileID: 1086449934}
+  startRoomTemplate: {fileID: 8745395880772889455, guid: c9d6c40c62392774481124803b3c0a64, type: 3}
+  availableMapTemplates: []
 --- !u!4 &400390231
 Transform:
   m_ObjectHideFlags: 0

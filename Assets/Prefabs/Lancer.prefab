@@ -169,7 +169,11 @@ MonoBehaviour:
   _spawnPoint: {fileID: 5827359634092302882}
   _laserMask:
     serializedVersion: 2
-    m_Bits: 16
+    m_Bits: 64
+  moveSpeed: 15
+  _wallDetectionDistance: 3.5
+  _sweepSpeed: 20
+  _sweepLaserRate: 0.4
 --- !u!1 &8828448389753858761
 GameObject:
   m_ObjectHideFlags: 0

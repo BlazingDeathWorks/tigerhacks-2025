@@ -35,6 +35,10 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
     [SerializeField] private float _sweepLaserRate = 0.4f; // Fire laser every 0.4 seconds while sweeping
     private float _lastSweepLaserTime;
     
+    // Edge duration requirement
+    [SerializeField] private float _minimumEdgeTime = 5f; // Must stay on edge for 5 seconds
+    private float _edgeStartTime;
+    
     // Current wall tracking for adjacent-only movement
     private EdgeDirection _currentWall;
 
@@ -98,8 +102,9 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
     {
         // Set up sweeping along the edge
         SetupEdgeSweeping();
+        _edgeStartTime = Time.time; // Record when we started this edge
         _currentState = LancerState.ProbingEdge;
-        Debug.Log("Starting edge probe");
+        Debug.Log("Starting edge probe - must stay for " + _minimumEdgeTime + " seconds");
     }
     
     private void HandleProbingEdge()
@@ -132,11 +137,25 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
             // Check if sweep is complete
             if (Vector2.Distance(transform.position, _sweepEndPos) < 0.1f)
             {
-                // Finished sweeping, pick a new wall to go to
-                _isSweeping = false;
-                PickNewWallDirection();
-                _currentState = LancerState.MovingToWall;
-                Debug.Log("Finished sweeping, picking new wall");
+                // Finished one sweep direction, but check if we've been on this edge long enough
+                float timeOnEdge = Time.time - _edgeStartTime;
+                
+                if (timeOnEdge >= _minimumEdgeTime)
+                {
+                    // We've spent enough time on this edge, move to next wall
+                    _isSweeping = false;
+                    PickNewWallDirection();
+                    _currentState = LancerState.MovingToWall;
+                    Debug.Log($"Finished edge after {timeOnEdge:F1} seconds, picking new wall");
+                }
+                else
+                {
+                    // Haven't been on edge long enough, reverse sweep direction
+                    Vector2 temp = _sweepStartPos;
+                    _sweepStartPos = _sweepEndPos;
+                    _sweepEndPos = temp;
+                    Debug.Log($"Only {timeOnEdge:F1}s on edge, need {_minimumEdgeTime}s - reversing sweep");
+                }
             }
         }
     }
@@ -146,39 +165,49 @@ public class EnemyLancer : MonoBehaviour, IObjectPooler<EnemyLazerIndicator>
         Vector2 currentPos = transform.position;
         
         // Use transform.right for sweeping perpendicular to the laser direction
-        // This will always be correct regardless of rotation
         Vector2 rightDirection = transform.right;
         Vector2 leftDirection = -transform.right;
         
-        // Find the sweep boundaries by raycasting in both perpendicular directions
-        RaycastHit2D hit1 = Physics2D.Raycast(currentPos, leftDirection, 20f, _laserMask);
-        RaycastHit2D hit2 = Physics2D.Raycast(currentPos, rightDirection, 20f, _laserMask);
+        // First, move to the actual wall edge we're supposed to sweep along
+        Vector2 wallDirection = -transform.up; // Direction toward the wall we just approached
+        RaycastHit2D wallHit = Physics2D.Raycast(currentPos, wallDirection, 5f, _laserMask);
+        Vector2 wallEdgePos = wallHit.collider ? 
+            (Vector2)wallHit.point + wallHit.normal * _wallDetectionDistance : 
+            currentPos + wallDirection * _wallDetectionDistance;
         
-        float leftDistance = hit1.collider ? hit1.distance - _wallDetectionDistance : 20f - _wallDetectionDistance;
-        float rightDistance = hit2.collider ? hit2.distance - _wallDetectionDistance : 20f - _wallDetectionDistance;
+        // Now find the TRUE extremes of this wall edge by raycasting from the wall edge position
+        RaycastHit2D leftCorner = Physics2D.Raycast(wallEdgePos, leftDirection, 50f, _laserMask);
+        RaycastHit2D rightCorner = Physics2D.Raycast(wallEdgePos, rightDirection, 50f, _laserMask);
         
-        Vector2 leftExtreme = currentPos + leftDirection * leftDistance;
-        Vector2 rightExtreme = currentPos + rightDirection * rightDistance;
+        // Calculate the actual corner positions with safe distance from walls
+        Vector2 leftExtreme = leftCorner.collider ? 
+            (Vector2)leftCorner.point - leftDirection * _wallDetectionDistance : 
+            wallEdgePos + leftDirection * 50f;
+        Vector2 rightExtreme = rightCorner.collider ? 
+            (Vector2)rightCorner.point - rightDirection * _wallDetectionDistance : 
+            wallEdgePos + rightDirection * 50f;
+        
+        // Calculate distances to determine which direction has more room
+        float leftDistance = Vector2.Distance(wallEdgePos, leftExtreme);
+        float rightDistance = Vector2.Distance(wallEdgePos, rightExtreme);
         
         // Always start from the direction with MORE distance (more room to explore)
         if (leftDistance >= rightDistance)
         {
-            // More room to the left, so start from the right extreme and sweep left
             _sweepStartPos = rightExtreme;
             _sweepEndPos = leftExtreme;
-            Debug.Log($"More room left ({leftDistance} vs {rightDistance}), sweeping right to left");
+            Debug.Log($"Full wall sweep: right to left ({rightDistance:F1} to {leftDistance:F1} units)");
         }
         else
         {
-            // More room to the right, so start from the left extreme and sweep right
             _sweepStartPos = leftExtreme;
             _sweepEndPos = rightExtreme;
-            Debug.Log($"More room right ({rightDistance} vs {leftDistance}), sweeping left to right");
+            Debug.Log($"Full wall sweep: left to right ({leftDistance:F1} to {rightDistance:F1} units)");
         }
         
         _isSweeping = false;
         
-        Debug.Log($"Setup sweep from {_sweepStartPos} to {_sweepEndPos}");
+        Debug.Log($"Full edge sweep from {_sweepStartPos} to {_sweepEndPos} (total distance: {Vector2.Distance(_sweepStartPos, _sweepEndPos):F1})");
     }
     
     private void PickNewWallDirection()

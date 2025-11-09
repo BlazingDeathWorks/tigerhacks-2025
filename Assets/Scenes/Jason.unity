@@ -921,6 +921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8191a6beeb7489fbf5d2ce9694c1ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooter
+  weaponIcon: {fileID: 0}
   _prefabReference: {fileID: 8732989348203863343, guid: a0748d5ad31414660b56438c9fff9800, type: 3}
   _shootPoint: {fileID: 1411958910}
   _shootInterval: 0.2
@@ -1300,32 +1301,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: moveSpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
       propertyPath: _sweepSpeed
-      value: 20
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _laserDuration
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _wallMask.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _laserMask.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _edgeProbeDuration
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3588679950745377716, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
-      propertyPath: _wallDetectionDistance
-      value: 3.5
+      propertyPath: _sweepLaserRate
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5696613831008801797, guid: b128a4d2d6b6040a6ab0b5f8d512687a, type: 3}
       propertyPath: m_Name

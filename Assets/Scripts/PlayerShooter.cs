@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerShooter : MonoBehaviour, IObjectPooler<NormalPoolableObject>
+public class PlayerShooter : WeaponBase, IObjectPooler<NormalPoolableObject>
 {
     public NormalPoolableObject Prefab => _prefabReference;
     [SerializeField] private NormalPoolableObject _prefabReference;
@@ -9,6 +9,15 @@ public class PlayerShooter : MonoBehaviour, IObjectPooler<NormalPoolableObject>
     [SerializeField] private float _shootInterval = 0.2f;
     private float _timeSinceLastShot = 0f;
     public Queue<NormalPoolableObject> Pool { get; private set; } = new Queue<NormalPoolableObject>();
+
+    void OnEnable()
+    {
+        if (UIManager.Instance != null)
+        {
+            // Use -1 as a convention for infinite ammo
+            UIManager.Instance.UpdateAmmo(-1);
+        }
+    }
 
     private void Awake()
     {

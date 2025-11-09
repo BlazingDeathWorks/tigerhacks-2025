@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerWeaponsManager : MonoBehaviour
 {
     [Tooltip("Add all weapon components (scripts) you want to cycle through here. The first element is the starting weapon.")]
-    [SerializeField] private MonoBehaviour[] weapons; 
+    [SerializeField] private WeaponBase[] weapons; 
     
     private int currentWeaponIndex = 0;
 
@@ -24,6 +24,12 @@ public class PlayerWeaponsManager : MonoBehaviour
             }
         }
         currentWeaponIndex = 0;
+
+        // Set the initial weapon icon
+        if (weapons[currentWeaponIndex] != null && UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateWeaponIcon(weapons[currentWeaponIndex].weaponIcon);
+        }
     }
 
     void Update()
@@ -63,6 +69,12 @@ public class PlayerWeaponsManager : MonoBehaviour
         if (weapons[currentWeaponIndex] != null)
         {
             weapons[currentWeaponIndex].enabled = true;
+
+            // Update the UI with the new weapon's icon
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.UpdateWeaponIcon(weapons[currentWeaponIndex].weaponIcon);
+            }
         }
     }
 }

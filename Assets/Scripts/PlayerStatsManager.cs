@@ -20,6 +20,15 @@ public class PlayerStatsManager : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
     }
+
+    void Start()
+    {
+        // Set initial health on the UI
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateHealth(currentHealth, maxHealth);
+        }
+    }
     
     public void ApplyStatUpgrade(StatType statType, float value, bool isPercentage)
     {
@@ -31,6 +40,7 @@ public class PlayerStatsManager : MonoBehaviour
                 else
                     currentHealth += value;
                 currentHealth = Mathf.Min(currentHealth, maxHealth);
+                if (UIManager.Instance != null) UIManager.Instance.UpdateHealth(currentHealth, maxHealth);
                 break;
                 
             case StatType.MaxHealth:
@@ -39,6 +49,7 @@ public class PlayerStatsManager : MonoBehaviour
                 else
                     maxHealth += value;
                 currentHealth = Mathf.Min(currentHealth, maxHealth);
+                if (UIManager.Instance != null) UIManager.Instance.UpdateHealth(currentHealth, maxHealth);
                 break;
                 
             case StatType.MaxAmmo:
@@ -95,6 +106,11 @@ public class PlayerStatsManager : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateHealth(currentHealth, maxHealth);
+        }
+
         if (currentHealth <= 0)
         {
             Die();
@@ -104,6 +120,10 @@ public class PlayerStatsManager : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateHealth(currentHealth, maxHealth);
+        }
     }
     
     private void Die()

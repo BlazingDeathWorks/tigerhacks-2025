@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class PrototypePlayerLazer : MonoBehaviour
+public class PrototypePlayerLazer : WeaponBase
 {
     [Header("Laser Settings")]
     public Transform spawnPoint;           // Where the laser starts (e.g., gun tip)
     public float maxDistance = 50f;        // Max distance per segment
     public int maxBounces = 5;             // Number of reflections
     public LayerMask reflectionMask;       // Layers the laser can hit
+    public Color laserColor = Color.green; // New: Public field for laser color
 
     [Header("Ammo Settings")]
     public int maxAmmo = 200;
@@ -22,18 +23,22 @@ public class PrototypePlayerLazer : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         currentAmmo = maxAmmo;
+
+        // Apply the chosen laser color
+        lineRenderer.startColor = laserColor;
+        lineRenderer.endColor = laserColor;
     }
 
     void OnEnable()
     {
-        // This is called when the weapon is switched to.
-        // You might want to update UI here.
-        // We won't reset ammo on switch, so it persists.
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateAmmo(currentAmmo);
+        }
     }
     
     void OnDisable()
     {
-        // Deactivate the laser when switching away from this weapon
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
@@ -49,7 +54,14 @@ public class PrototypePlayerLazer : MonoBehaviour
                 lineRenderer.enabled = true;
             }
             DrawLaser();
+
+            int oldAmmo = currentAmmo;
             currentAmmo = (int)Mathf.Max(0, currentAmmo - ammoConsumptionRate * Time.deltaTime);
+
+            if (currentAmmo != oldAmmo && UIManager.Instance != null)
+            {
+                UIManager.Instance.UpdateAmmo(currentAmmo);
+            }
         }
         else
         {
@@ -77,24 +89,17 @@ public class PrototypePlayerLazer : MonoBehaviour
 
             if (hit.collider != null)
             {
-                // Add the hit point
                 laserPoints.Add(hit.point);
-
-                // Reflect the direction
                 direction = Vector2.Reflect(direction, hit.normal).normalized;
-
-                // Move start slightly away from surface to prevent infinite loops
                 currentPos = hit.point + direction * 0.01f;
             }
             else
             {
-                // No hit: go straight until max distance
                 laserPoints.Add(currentPos + direction * maxDistance);
                 break;
             }
         }
 
-        // Apply to LineRenderer
         lineRenderer.positionCount = laserPoints.Count;
         lineRenderer.SetPositions(laserPoints.ToArray());
     }

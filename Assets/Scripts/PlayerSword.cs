@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerSword : MonoBehaviour
+public class PlayerSword : WeaponBase
 {
     [Header("References")]
     [Tooltip("The parent object that will be rotated to create the swing. The sword sprite should be a child of this object.")]
@@ -13,10 +13,13 @@ public class PlayerSword : MonoBehaviour
     public TrailRenderer swordTrail;
 
     [Header("Attack Settings")]
+    public int maxAmmo = 30;
+    public int currentAmmo;
     public float attackDamage = 25f;
     public float attackRange = 0.8f;
     public float attackRate = 2f; // Attacks per second
-    public LayerMask enemyLayers;
+    [Tooltip("Set this to include layers for both Enemies and Enemy Projectiles.")]
+    public LayerMask hitMask;
 
     [Header("Animation Settings")]
     [Tooltip("How long the swing animation takes. Set to a very small value for an almost instant swing.")]
@@ -30,6 +33,7 @@ public class PlayerSword : MonoBehaviour
 
     void Awake()
     {
+        currentAmmo = maxAmmo;
         if (swordPivotObject != null)
         {
             swordPivotObject.SetActive(false);
@@ -44,10 +48,13 @@ public class PlayerSword : MonoBehaviour
             Quaternion restingRotation = Quaternion.Euler(0, 0, (swingToLeft ? 1 : -1) * (swingAngle / 2));
             swordPivotObject.transform.localRotation = restingRotation;
         }
-        // Ensure the trail is not emitting when we switch to this weapon.
         if (swordTrail != null)
         {
             swordTrail.emitting = false;
+        }
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateAmmo(currentAmmo);
         }
     }
 
@@ -63,7 +70,7 @@ public class PlayerSword : MonoBehaviour
     {
         if (Time.time >= nextAttackTime)
         {
-            if (Input.GetMouseButtonDown(0) && !isAttacking)
+            if (Input.GetMouseButtonDown(0) && !isAttacking && currentAmmo > 0)
             {
                 nextAttackTime = Time.time + 1f / attackRate;
                 StartCoroutine(SwingAttack());
@@ -74,12 +81,18 @@ public class PlayerSword : MonoBehaviour
     IEnumerator SwingAttack()
     {
         isAttacking = true;
+        currentAmmo--;
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateAmmo(currentAmmo);
+        }
+
         List<Collider2D> hitThisSwing = new List<Collider2D>();
 
         if (swordTrail != null)
         {
-            swordTrail.Clear(); // Clear any old trail segments.
-            swordTrail.emitting = true; // Start emitting the trail.
+            swordTrail.Clear();
+            swordTrail.emitting = true;
         }
 
         float startAngleVal = (swingToLeft ? 1 : -1) * (swingAngle / 2);
@@ -93,14 +106,27 @@ public class PlayerSword : MonoBehaviour
             float progress = elapsedTime / swingDuration;
             swordPivotObject.transform.localRotation = Quaternion.Slerp(startRotation, endRotation, progress);
 
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-            foreach (Collider2D enemy in hitEnemies)
+            // --- Continuous Hit Detection ---
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, hitMask);
+            foreach (Collider2D collider in hitColliders)
             {
-                if (!hitThisSwing.Contains(enemy))
+                if (!hitThisSwing.Contains(collider))
                 {
-                    hitThisSwing.Add(enemy);
-                    Debug.Log($"Sword hit {enemy.name}");
-                    // TODO: Replace this with your actual damage logic.
+                    // Check if it's an enemy projectile and destroy it
+                    if (collider.CompareTag("EnemyProjectile"))
+                    {
+                        hitThisSwing.Add(collider); // Add to list so we don't process it again
+                        Destroy(collider.gameObject);
+                        Debug.Log("Sword destroyed an enemy projectile.");
+                    }
+                    // Check if it's an enemy and damage it
+                    else if (collider.CompareTag("Enemy"))
+                    {
+                        hitThisSwing.Add(collider);
+                        Debug.Log($"Sword hit {collider.name}");
+                        // TODO: Replace this with your actual damage logic.
+                        // For example: enemy.GetComponent<EnemyHealth>()?.TakeDamage(attackDamage);
+                    }
                 }
             }
             
@@ -112,7 +138,7 @@ public class PlayerSword : MonoBehaviour
         
         if (swordTrail != null)
         {
-            swordTrail.emitting = false; // Stop emitting the trail.
+            swordTrail.emitting = false;
         }
         
         swingToLeft = !swingToLeft;

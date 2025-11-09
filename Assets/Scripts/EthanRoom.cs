@@ -287,6 +287,7 @@ public class EthanRoom : MonoBehaviour
             ProgressScript.Instance.roomCount += 6;
             ProgressScript.Instance.branchMaxCount += 1;
             ProgressScript.Instance.endDistance += 2;
+            ProgressScript.Instance.HealthMultiplier += .5f;
 
             //TODO add some sort of animation here. maybe we wait for a boss death animation and then fade out the screen
             //then we transition to the next level

@@ -8,6 +8,7 @@ public class ProgressScript : MonoBehaviour
     public int branchMinCount = 1;
     public int branchMaxCount = 2;
     public int endDistance = 4;
+    public float HealthMultiplier = 0.5f;
 
     private void Awake()
     {

@@ -53,6 +53,7 @@ public class MapGeneratorScript : MonoBehaviour
         //Place the start and end rooms
         rooms[start] = Instantiate(roomPrefab, new Vector3(start.x, start.y, 0f), Quaternion.identity);
         rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
+        rooms[start].GetComponent<EthanRoom>().isStartRoom = true;
 
         GameObject newChild = Instantiate(startRoomTemplate, new Vector3(start.x, start.y), Quaternion.identity);
         

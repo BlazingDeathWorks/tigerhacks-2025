@@ -15,7 +15,10 @@ public class EthanRoom : MonoBehaviour
 
     public GameObject roomTemplate;
 
+    public GameObject itemChoiceManager;   
+
     public bool isBossRoom = false;
+    public bool isStartRoom = false;
     public bool roomCleared = false;
     public bool roomActive = false;
     public int previousActiveRoom = -1;
@@ -256,6 +259,12 @@ public class EthanRoom : MonoBehaviour
             toggleRightDoor(false);
             toggleTopDoor(false);
             toggleBottomDoor(false);
+            if (!this.isStartRoom)
+            {
+                this.itemChoiceManager.SetActive(true);
+                this.itemChoiceManager.GetComponent<ItemChoiceManager>().SpawnItemChoice();
+            }
+            
         }
 
     }

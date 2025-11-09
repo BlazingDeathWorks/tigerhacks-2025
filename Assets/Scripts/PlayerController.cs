@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!movementEnabled)
         {
-            if (TargetX != 0 && TargetY != 0)
+            if (TargetX != 0 || TargetY != 0)
             {
                 //UnityEngine.Debug.Log("Moving player");
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(TargetX, TargetY, transform.position.z), Time.deltaTime * 85.0f);

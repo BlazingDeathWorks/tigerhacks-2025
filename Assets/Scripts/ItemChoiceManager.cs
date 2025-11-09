@@ -49,7 +49,7 @@ public class ItemChoiceManager : MonoBehaviour
         connectionLine.enabled = false;
         
         // Make sure line renders behind items
-        connectionLine.sortingOrder = -1;
+        connectionLine.sortingOrder = 0;
     }
     
     public void SpawnItemChoice()

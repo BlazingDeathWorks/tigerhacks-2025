@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8775a2c9d65bc1418612c12093c5190, type: 3}
+  m_Name: HealthUpgrade
+  m_EditorClassIdentifier: Assembly-CSharp::ItemType
+  itemName: 
+  itemIcon: {fileID: -8504478667243500470, guid: 1de43e8b4e3370c4da8fe95d9b2ccf9e, type: 3}
+  category: 0
+  statType: 1
+  statValue: 30
+  isPercentage: 0
+  weaponData: {fileID: 0}
+  spawnWeight: 1
+  itemGlowColor: {r: 1, g: 1, b: 1, a: 1}

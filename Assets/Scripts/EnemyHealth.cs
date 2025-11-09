@@ -9,7 +9,7 @@ public class EnemyHealth : MonoBehaviour
         Health -= damage;
         if (Health <= 0)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }

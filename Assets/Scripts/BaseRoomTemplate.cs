@@ -57,6 +57,13 @@ public class BaseRoomTemplate : MonoBehaviour
                 enemies.Add(childTransform.gameObject);
             }
         }
+        if (enemies.Count == 0)
+        {
+            UnityEngine.Debug.Log("no enemies found!");
+        } else
+        {
+            UnityEngine.Debug.Log("enemies found!");    
+        }
 
 
 

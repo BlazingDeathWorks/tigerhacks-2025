@@ -9,6 +9,13 @@ public class MapGeneratorScript : MonoBehaviour
     [SerializeField] private GameObject roomPrefab;
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject startRoomTemplate;
+    [SerializeField] private GameObject endRoomTemplate;
+    [SerializeField] private int bossManhattenDistance;
+    [SerializeField] private int minBranchSize;
+    [SerializeField] private int maxBranchSize;
+    [SerializeField] private int maxRoomCount;
+    [SerializeField] private string nextSceneName;
+
 
     public GameObject[] availableMapTemplates;
 
@@ -66,7 +73,12 @@ public class MapGeneratorScript : MonoBehaviour
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
         rooms[end].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player, null);
         rooms[end].GetComponent<EthanRoom>().isBossRoom = true;
+        rooms[end].GetComponent<EthanRoom>().nextSceneName = this.nextSceneName;
 
+        GameObject __newChild = Instantiate(endRoomTemplate, new Vector3(end.x, end.y), Quaternion.identity);
+
+        __newChild.transform.SetParent(rooms[end].transform);
+        __newChild.SetActive(false);
 
 
         rooms[start].GetComponent<EthanRoom>().roomActive = true;
@@ -326,7 +338,20 @@ public class MapGeneratorScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Generate(Vector2Int.zero, new Vector2Int(ROOM_SIZE * 2, ROOM_SIZE * 3), 4, 4, 7);
+        //Choose location of boss room
+        //choose a random range of our manhatten distance to be x, then randomly make it negative, 
+        int x = UnityEngine.Random.Range(0, bossManhattenDistance);
+        int y = bossManhattenDistance - x;
+        if (UnityEngine.Random.value > 0.5)
+        {
+            x = -x;
+        }
+        if (UnityEngine.Random.value > 0.5)
+        {
+            y = -y;
+        }
+
+        Generate(Vector2Int.zero, new Vector2Int(ROOM_SIZE * x, ROOM_SIZE * y), maxRoomCount, minBranchSize, maxBranchSize);
         /*
         GameObject roomtest = Instantiate(roomPrefab, Vector2.zero, Quaternion.identity);
         EthanRoom roomScript = roomtest.GetComponent<EthanRoom>();

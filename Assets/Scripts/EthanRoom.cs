@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class EthanRoom : MonoBehaviour
@@ -15,7 +16,11 @@ public class EthanRoom : MonoBehaviour
 
     public GameObject roomTemplate;
 
-    public GameObject itemChoiceManager;   
+    public GameObject itemChoiceManager;
+
+    public GameObject boss;
+
+    public string nextSceneName;
 
     public bool isBossRoom = false;
     public bool isStartRoom = false;
@@ -246,9 +251,10 @@ public class EthanRoom : MonoBehaviour
                     break;
             }
 
-            //TODO unfreeze the enemies
         }
     }
+
+
 
     public void ClearRoom()
     {
@@ -265,6 +271,11 @@ public class EthanRoom : MonoBehaviour
                 this.itemChoiceManager.GetComponent<ItemChoiceManager>().SpawnItemChoice();
             }
             
+        } else
+        {
+            //TODO add some sort of animation here. maybe we wait for a boss death animation and then fade out the screen
+            //then we transition to the next level
+            SceneManager.LoadScene(nextSceneName);
         }
 
     }

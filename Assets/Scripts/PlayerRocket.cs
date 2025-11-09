@@ -49,6 +49,11 @@ public class PlayerRocket : MonoBehaviour, IObjectPoolable<PlayerRocket>
         {
             Explode();
         }
+        if (other.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+        {
+            enemyHealth.TakeDamage(10);
+            Explode();
+        }
     }
 
     private void Explode()

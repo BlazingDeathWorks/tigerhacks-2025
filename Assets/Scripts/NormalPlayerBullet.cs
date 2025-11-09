@@ -26,4 +26,14 @@ public class NormalPlayerBullet : MonoBehaviour
     {
         _rb.linearVelocity = transform.up * _bulletSpeed;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+        {
+            enemyHealth.TakeDamage(1); // Assuming the bullet deals 1 damage
+            _timeAlive = 0f;
+            ObjectPool.Return(_poolableObject);
+        }
+    }
 }

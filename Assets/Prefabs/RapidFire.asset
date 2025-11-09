@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8775a2c9d65bc1418612c12093c5190, type: 3}
+  m_Name: RapidFire
+  m_EditorClassIdentifier: Assembly-CSharp::ItemType
+  itemName: RapidFire
+  itemIcon: {fileID: 3299134374553386325, guid: 25ee726b71a5fd24abb8be6cfca58eca, type: 3}
+  category: 0
+  statType: 4
+  statValue: 0.05
+  isPercentage: 1
+  weaponData: {fileID: 0}
+  spawnWeight: 1
+  itemGlowColor: {r: 0.706969, g: 0.15069413, b: 0.9622642, a: 1}

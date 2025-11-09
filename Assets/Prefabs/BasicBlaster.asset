@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d62a8bcd9f91c42a09a259b20a9f04, type: 3}
+  m_Name: BasicBlaster
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: Blaster
+  weaponSprite: {fileID: -1822602828930341387, guid: a1eec905324534543a585a98dc688c3e, type: 3}
+  weaponIcon: {fileID: 4921304524251845319, guid: a1eec905324534543a585a98dc688c3e, type: 3}
+  maxAmmo: 100
+  infiniteAmmo: 1
+  baseDamage: 10
+  fireRate: 5
+  projectilePrefab: {fileID: 3434538794214776687, guid: cac4d18ba85a8cf44a6cc8efca1728df, type: 3}
+  projectileSpeed: 20
+  projectileSize: 1
+  fireSound: {fileID: 0}
+  emptySound: {fileID: 0}

@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 mousePosition;
     private Camera mainCamera;
 
+    private bool movementEnabled = true;
     private bool isDashing = false;
     private float dashTimeRemaining = 0f;
     private float dashCooldownRemaining = 0f;
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!movementEnabled) return;
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
         if (moveInput.magnitude > 1f) moveInput.Normalize();
@@ -61,8 +63,26 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!movementEnabled) return;
         if (isDashing) HandleDash();
         else HandleNormalMovement();
+    }
+
+
+    public void TeleportToLocation(Vector3 loc)
+    {
+        transform.position = loc;
+    }
+
+    public void LockMovement()
+    {
+        movementEnabled = false;
+        rb.linearVelocity = new Vector2(0, 0);
+    }
+
+    public void UnlockMovement()
+    {
+        movementEnabled = true;
     }
 
     private void RotateTowardsMouse()

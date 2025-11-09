@@ -7,6 +7,7 @@ using UnityEngine;
 public class MapGeneratorScript : MonoBehaviour
 {
     [SerializeField] private GameObject roomPrefab;
+    [SerializeField] private GameObject player;
     private Dictionary<Vector2Int, GameObject> rooms = new Dictionary<Vector2Int, GameObject>();
     private int roomCount = 0;
     private int targetRoomCount;
@@ -43,8 +44,9 @@ public class MapGeneratorScript : MonoBehaviour
     {
         //Place the start and end rooms
         rooms[start] = Instantiate(roomPrefab, new Vector3(start.x, start.y, 0f), Quaternion.identity);
+        rooms[start].GetComponent<EthanRoom>().Initialize(rooms, start, ROOM_SIZE, this.player);
         rooms[end] = Instantiate(roomPrefab, new Vector3(end.x, end.y, 0f), Quaternion.identity);
-
+        rooms[start].GetComponent<EthanRoom>().roomActive = true;
         //TEMP CODE TO COLOR START AND END
         SpriteRenderer spriteRenderer = rooms[end].transform.GetChild(0).GetComponent<SpriteRenderer>();
         spriteRenderer.color = new Color(0f, 0f, 1f, 0.5f);
@@ -62,7 +64,7 @@ public class MapGeneratorScript : MonoBehaviour
             {
                 rooms[nextPosition] = Instantiate(roomPrefab, new Vector3(nextPosition.x, nextPosition.y, 0f), Quaternion.identity);
                 EthanRoom roomScript = rooms[nextPosition].GetComponent<EthanRoom>();
-                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE);
+                roomScript.Initialize(rooms, nextPosition, ROOM_SIZE, this.player);
                 targetRoomCount++;
             }
             currentPosition = nextPosition;
@@ -185,7 +187,7 @@ public class MapGeneratorScript : MonoBehaviour
     {
         rooms[location] = Instantiate(roomPrefab, new Vector3(location.x, location.y, 0f), Quaternion.identity);
         EthanRoom roomScript = rooms[location].GetComponent<EthanRoom>();
-        roomScript.Initialize(rooms, location, ROOM_SIZE);
+        roomScript.Initialize(rooms, location, ROOM_SIZE, this.player);
         roomCount++;
     }
 
@@ -276,11 +278,13 @@ public class MapGeneratorScript : MonoBehaviour
         //just iterate over each room and assign a preset. If its specifically the start and end room, assign different presets
 
     }
+
+    
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Generate(Vector2Int.zero, new Vector2Int(ROOM_SIZE * 5, ROOM_SIZE * 6), 10, 4, 7);
+        Generate(Vector2Int.zero, new Vector2Int(ROOM_SIZE * 2, ROOM_SIZE * 3), 4, 4, 7);
         /*
         GameObject roomtest = Instantiate(roomPrefab, Vector2.zero, Quaternion.identity);
         EthanRoom roomScript = roomtest.GetComponent<EthanRoom>();

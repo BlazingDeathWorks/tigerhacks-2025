@@ -1,52 +1,84 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class EthanRoom : MonoBehaviour
 {
     [SerializeField] private Sprite[] backgrounds;
+    public GameObject player; 
 
     public GameObject leftRoom;
     public GameObject rightRoom;
     public GameObject topRoom;
     public GameObject bottomRoom;
 
-    bool roomCleared = false;
+    public bool roomCleared = false;
+    public bool roomActive = false;
+    public int previousActiveRoom = -1;
+    public bool triggerRoomChange = false;
     
-    public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE)
+    public void Initialize(Dictionary<Vector2Int, GameObject> rooms, Vector2Int location, int ROOM_SIZE, GameObject player)
     {
         //Make sure all corners are properly set
         Vector2Int topLocation = location + new Vector2Int(0, ROOM_SIZE);
         if (rooms.ContainsKey(topLocation)) //if there is a room above
         {
             topRoom = rooms[topLocation];
+            EnableTopDoor();
             topRoom.GetComponent<EthanRoom>().bottomRoom = gameObject;
+            topRoom.GetComponent<EthanRoom>().EnableBottomDoor();
         }
 
         Vector2Int bottomLocation = location + new Vector2Int(0, -ROOM_SIZE);
         if (rooms.ContainsKey(bottomLocation)) //if there is a room above
         {
             bottomRoom = rooms[bottomLocation];
+            EnableBottomDoor();
             bottomRoom.GetComponent<EthanRoom>().topRoom = gameObject;
+            bottomRoom.GetComponent<EthanRoom>().EnableTopDoor();
         }
 
         Vector2Int leftLocation = location + new Vector2Int(-ROOM_SIZE, 0);
         if (rooms.ContainsKey(leftLocation)) //if there is a room above
         {
             leftRoom = rooms[leftLocation];
+            EnableLeftDoor();
             leftRoom.GetComponent<EthanRoom>().rightRoom = gameObject;
+            leftRoom.GetComponent<EthanRoom>().EnableRightDoor();
         }
 
         Vector2Int rightLocation = location + new Vector2Int(ROOM_SIZE, 0);
         if (rooms.ContainsKey(rightLocation)) //if there is a room above
         {
             rightRoom = rooms[rightLocation];
+            EnableRightDoor();
             rightRoom.GetComponent<EthanRoom>().leftRoom = gameObject;
+            rightRoom.GetComponent<EthanRoom>().EnableLeftDoor();
         }
 
-
-
+        this.player = player;
         
+    }
+
+    public void EnableTopDoor()
+    {
+        transform.Find("TopDoor").GetComponent<DoorLogic>().EnableDoor();
+    }
+
+    public void EnableRightDoor()
+    {
+        transform.Find("RightDoor").GetComponent<DoorLogic>().EnableDoor();
+    }
+
+    public void EnableLeftDoor()
+    {
+        transform.Find("LeftDoor").GetComponent<DoorLogic>().EnableDoor();
+    }
+
+    public void EnableBottomDoor()
+    {
+        transform.Find("BottomDoor").GetComponent<DoorLogic>().EnableDoor();
     }
 
     void toggleLeftDoor(bool toggle)
@@ -54,7 +86,14 @@ public class EthanRoom : MonoBehaviour
         GameObject door = this.transform.Find("LeftDoor").gameObject;
         if (leftRoom != null)
         {
-            door.GetComponent<SpriteRenderer>().enabled = toggle;
+            if (toggle)
+            {
+                door.GetComponent<DoorLogic>().Close();
+            } else
+            {
+                door.GetComponent<DoorLogic>().Open();
+            }
+            
         }
     }
 
@@ -63,7 +102,14 @@ public class EthanRoom : MonoBehaviour
         GameObject door = this.transform.Find("RightDoor").gameObject;
         if (rightRoom != null)
         {
-            door.GetComponent<SpriteRenderer>().enabled = toggle;
+            if (toggle)
+            {
+                door.GetComponent<DoorLogic>().Close();
+            }
+            else
+            {
+                door.GetComponent<DoorLogic>().Open();
+            }
         }
     }
 
@@ -72,7 +118,14 @@ public class EthanRoom : MonoBehaviour
         GameObject door = this.transform.Find("TopDoor").gameObject;
         if (topRoom != null)
         {
-            door.GetComponent<SpriteRenderer>().enabled = toggle;
+            if (toggle)
+            {
+                door.GetComponent<DoorLogic>().Close();
+            }
+            else
+            {
+                door.GetComponent<DoorLogic>().Open();
+            }
         }
     }
 
@@ -81,8 +134,24 @@ public class EthanRoom : MonoBehaviour
         GameObject door = this.transform.Find("BottomDoor").gameObject;
         if (bottomRoom != null)
         {
-            door.GetComponent<SpriteRenderer>().enabled = toggle;
+            if (toggle)
+            {
+                door.GetComponent<DoorLogic>().Close();
+            }
+            else
+            {
+                door.GetComponent<DoorLogic>().Open();
+            }
         }
+    }
+
+    public void DeactivateRoom()
+    {
+        toggleTopDoor(true);
+        toggleBottomDoor(true);
+        toggleRightDoor(true);
+        toggleLeftDoor(true);
+        this.roomActive = false;
     }
 
 
@@ -102,7 +171,7 @@ public class EthanRoom : MonoBehaviour
     }
 
     //Should be called when we want to enter the room
-    void StartEnterRoom(int enteringDirection) //0 == top, 1 == bottom, 2 == left, 3 == right
+    public void StartEnterRoom(int enteringDirection) //0 == top, 1 == bottom, 2 == left, 3 == right
     {
         if (this.roomCleared)
         {
@@ -132,7 +201,7 @@ public class EthanRoom : MonoBehaviour
     }
 
     //Should be called after we finish the room entering animation
-    void EndEnterRoom(int enteringDirection)
+    public void EndEnterRoom(int enteringDirection)
     {
 
         if (!this.roomCleared)
@@ -157,14 +226,86 @@ public class EthanRoom : MonoBehaviour
         }
     }
 
-    void ClearRoom()
+    public void ClearRoom()
     {
         this.roomCleared = true;
+        toggleLeftDoor(false);
+        toggleRightDoor(false) ;
+        toggleTopDoor(false);
+        toggleBottomDoor(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+        //TODO TEMP - clear level on i
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (!this.roomCleared && this.roomActive)
+            {
+                ClearRoom();
+            }
+        }
+
+
+        if (triggerRoomChange && previousActiveRoom != -1) //we want to transition to this room,
+        {
+            //UnityEngine.Debug.Log(Camera.main);
+            switch (Camera.main.GetComponent<EthanCustomCamera>().transitionStatus)
+            {
+                case 0: //not yet started transition
+                    //first, lock player movement
+                    player.GetComponent<PlayerController>().LockMovement(); 
+
+                    //now, call the startEnterRoom function and indicate we are actively in a room change
+                    StartEnterRoom(previousActiveRoom);
+
+                    //now wait until the camera transition
+                    UnityEngine.Debug.Log("Running camera transition");
+                    Camera.main.GetComponent<EthanCustomCamera>().runCameraTransition(previousActiveRoom);
+                    break;
+                case 1: //actively transitioning, dont do anything
+                    break;
+                case 2: //transition finished
+                    Camera.main.GetComponent<EthanCustomCamera>().transitionStatus = 0;
+
+                    EndEnterRoom(previousActiveRoom);
+
+                    triggerRoomChange = false;
+
+
+                    //fr now, just center the player
+                    player.GetComponent<PlayerController>().TeleportToLocation(transform.position);
+
+                    //unlock player controls
+                    player.GetComponent<PlayerController>().UnlockMovement();
+
+                    //update the active room
+                    this.roomActive = true;
+
+                    //tell the previous room to become unactive
+                    switch (previousActiveRoom)
+                    {
+                        case 0: //top
+                            topRoom.GetComponent<EthanRoom>().DeactivateRoom();
+                            break;
+                        case 1: //bottom
+                            bottomRoom.GetComponent<EthanRoom>().DeactivateRoom();
+                            break;
+                        case 2: //left
+                            leftRoom.GetComponent<EthanRoom>().DeactivateRoom();
+                            break;
+                        case 3: //right
+                            rightRoom.GetComponent<EthanRoom>().DeactivateRoom();
+                            break;
+                    }
+
+                    previousActiveRoom = -1;
+
+                    break;
+            }
+
+        }
     }
 }
